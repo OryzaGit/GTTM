@@ -1,0 +1,25 @@
+{
+	"name": "DestinationDataset_sow",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "copyfile",
+				"folderPath": "synapse/workspaces/oryzaworkspce",
+				"fileSystem": "oryzafiledatalake"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

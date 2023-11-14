@@ -1,0 +1,63 @@
+{
+	"name": "SourceDataset_sow",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "part-00000-a6907cc8-71dc-4334-8d27-b8e8df6addbb-c000.snappy.parquet",
+				"folderPath": "synapse/workspaces/oryzaworkspce/data-test",
+				"fileSystem": "oryzafiledatalake"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "CreatedAt",
+				"type": "INT96"
+			},
+			{
+				"name": "UpdatedAt",
+				"type": "INT96"
+			},
+			{
+				"name": "DeletedAt",
+				"type": "INT96"
+			},
+			{
+				"name": "Phone",
+				"type": "UTF8"
+			},
+			{
+				"name": "TradingCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "userCreateID",
+				"type": "UTF8"
+			},
+			{
+				"name": "IsSuccess",
+				"type": "INT32"
+			},
+			{
+				"name": "DeviceId",
+				"type": "UTF8"
+			},
+			{
+				"name": "MessageError",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

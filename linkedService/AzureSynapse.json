@@ -1,0 +1,17 @@
+{
+	"name": "AzureSynapse",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSynapseArtifacts",
+		"typeProperties": {
+			"endpoint": "https://oryzaworkspce.dev.azuresynapse.net",
+			"authentication": "MSI",
+			"workspaceResourceId": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Synapse/workspaces/oryzaworkspce"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
