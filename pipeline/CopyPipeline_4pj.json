@@ -5,7 +5,14 @@
 			{
 				"name": "Copy_4pj",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -29,6 +36,14 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": false,
+							"wildcardFolderPath": {
+								"value": "@variables('FolderName')",
+								"type": "Expression"
+							},
+							"wildcardFileName": {
+								"value": "@variables('FileName')",
+								"type": "Expression"
+							},
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -363,8 +378,30 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "FolderName",
+					"value": "oryzafiledatalake/synapse/workspaces/oryzaworkspce/data-test"
+				}
 			}
 		],
+		"variables": {
+			"FileName": {
+				"type": "String"
+			},
+			"FolderName": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
