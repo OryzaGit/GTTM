@@ -1,0 +1,142 @@
+{
+	"name": "SourceDataset_4pj",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "2023-11-14 15:55:38.313807.snappy.parquet",
+				"folderPath": "synapse/workspaces/oryzaworkspce/data-test",
+				"fileSystem": "oryzafiledatalake"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "Time",
+				"type": "INT96"
+			},
+			{
+				"name": "PlateColor",
+				"type": "UTF8"
+			},
+			{
+				"name": "VehicleType",
+				"type": "UTF8"
+			},
+			{
+				"name": "VehicleColor",
+				"type": "UTF8"
+			},
+			{
+				"name": "VehicleModel",
+				"type": "UTF8"
+			},
+			{
+				"name": "Speed",
+				"type": "INT32"
+			},
+			{
+				"name": "IsWrongLane",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "SmallImg",
+				"type": "UTF8"
+			},
+			{
+				"name": "BigImg",
+				"type": "UTF8"
+			},
+			{
+				"name": "Weight",
+				"type": "INT32"
+			},
+			{
+				"name": "CamName",
+				"type": "UTF8"
+			},
+			{
+				"name": "Accuracy",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "IsOverload",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "WeightOverload",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "IsOversize",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "VehicleLength",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VehicleWidth",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VehicleHeight",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "EventTraffic",
+				"type": "UTF8"
+			},
+			{
+				"name": "BeforeImg",
+				"type": "UTF8"
+			},
+			{
+				"name": "AfterImg",
+				"type": "UTF8"
+			},
+			{
+				"name": "CreateAt",
+				"type": "INT96"
+			},
+			{
+				"name": "UpdateAt",
+				"type": "INT96"
+			},
+			{
+				"name": "IsDelete",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "Hash",
+				"type": "UTF8"
+			},
+			{
+				"name": "PlateNo",
+				"type": "UTF8"
+			},
+			{
+				"name": "Lane",
+				"type": "INT32"
+			},
+			{
+				"name": "CamIpAddress",
+				"type": "UTF8"
+			},
+			{
+				"name": "VolumeOversize",
+				"type": "UTF8"
+			}
+		]
+	}
+}
