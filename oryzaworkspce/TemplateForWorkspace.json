@@ -72,7 +72,7 @@
 									"modifiedDatetimeStart": null,
 									"wildcardFolderPath": "synapse/traffic-log",
 									"wildcardFileName": {
-										"value": "@concat('output_',formatDateTime(pipeline().TriggerName,'yyyy_MM_dd'),'.parquet')",
+										"value": "@concat('output_',formatDateTime(pipeline().TriggerTime,'yyyy_MM_dd'),'.parquet')",
 										"type": "Expression"
 									},
 									"enablePartitionDiscovery": false
