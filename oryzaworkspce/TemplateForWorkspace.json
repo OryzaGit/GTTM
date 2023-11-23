@@ -30,6 +30,10 @@
 		"oryzaworkspce-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://oryzadatalake.dfs.core.windows.net"
+		},
+		"Trigger new file_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzadatalake"
 		}
 	},
 	"variables": {
@@ -69,6 +73,11 @@
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
+									"wildcardFolderPath": "synapse/traffic-log",
+									"wildcardFileName": {
+										"value": "@concat('log_',formatDateTime(pipeline().TriggerTime,'yyyy_MM_dd'),'.parquet')",
+										"type": "Expression"
+									},
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
@@ -1987,6 +1996,37 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Trigger new file')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "CopyPipelineLogT",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/oryzafiledatalake/blobs/synapse/traffic-log",
+					"blobPathEndsWith": ".parquet",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('Trigger new file_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/CopyPipelineLogT')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
 			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
 			"apiVersion": "2019-06-01-preview",
@@ -2021,7 +2061,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "DROP TABLE TrafficViolation;\nCREATE TABLE TrafficViolation (\n    LogId varchar(50),\n    ViolationPatternId varchar(50),\n    StatusId varchar(50),\n    DocumentNumber varchar(50),\n    OperationTeam varchar(100),\n    Dear varchar(100),\n    VehicleOwner varchar(100), \n    DOB datetime,\n    Address varchar(255),\n    LocationViolation varchar(255),\n    Description varchar(1000),\n    Coordinate varchar(50),\n    SettlementAgency varchar(100),\n    DateTranfer datetime,\n    DateSolving datetime,\n    ExtraData varchar(4000),\n    ID varchar(50),\n    CreatedAt datetime,\n    UpdatedAt datetime, \n    DeletedAt datetime\n)\nDROP TABLE TrafficLog;\nCREATE TABLE TrafficLog (\n    Time datetime, \n    PlateNo varchar(20),\n    PlateColor varchar(100),\n    VehicleType varchar(100),\n    VehicleColor varchar(100),\n    VehicleModel varchar(100),\n    Speed int,\n    Lane int,\n    IsWrongLane bit,\n    IsOverload bit, \n    WeightOverload int,\n    IsOversize bit,\n    VolumeOversize varchar(100),\n    VehicleLength int,\n    VehicleWidth int, \n    VehicleHeight int,\n    EventTraffic varchar(255),\n    Hash varchar(50),\n    ExtraData NVARCHAR(4000),\n    ID varchar(50),\n    CreatedAt datetime,\n    UpdatedAt datetime, \n    DeletedAt datetime,\n    AfterImg varchar(500),\n    BeforeImg varchar(500), \n    BigImg varchar(500),\n    SmallImg varchar(500)\n)",
+					"query": "DROP TABLE TrafficViolation;\nCREATE TABLE TrafficViolation (\n    LogId varchar(50),\n    ViolationPatternId varchar(255),\n    StatusId varchar(255),\n    DocumentNumber varchar(255),\n    OperationTeam varchar(100),\n    Dear varchar(100),\n    VehicleOwner varchar(100), \n    DOB datetime,\n    Address varchar(255),\n    LocationViolation varchar(255),\n    Description varchar(1000),\n    Coordinate varchar(255),\n    SettlementAgency varchar(100),\n    DateTranfer datetime,\n    DateSolving datetime,\n    ExtraData varchar(4000),\n    ID varchar(50),\n    CreatedAt datetime,\n    UpdatedAt datetime, \n    DeletedAt datetime\n)\nDROP TABLE TrafficLog;\nCREATE TABLE TrafficLog (\n    Time datetime, \n    PlateNo varchar(50),\n    PlateColor varchar(255),\n    VehicleType varchar(255),\n    VehicleColor varchar(255),\n    VehicleModel varchar(255),\n    Speed int,\n    Lane int,\n    IsWrongLane bit,\n    IsOverload bit, \n    WeightOverload int,\n    IsOversize bit,\n    VolumeOversize varchar(100),\n    VehicleLength int,\n    VehicleWidth int, \n    VehicleHeight int,\n    EventTraffic varchar(255),\n    Hash varchar(255),\n    ExtraData NVARCHAR(4000),\n    ID varchar(50),\n    CreatedAt datetime,\n    UpdatedAt datetime, \n    DeletedAt datetime,\n    AfterImg varchar(500),\n    BeforeImg varchar(500), \n    BigImg varchar(500),\n    SmallImg varchar(500)\n)",
 					"metadata": {
 						"language": "sql"
 					},

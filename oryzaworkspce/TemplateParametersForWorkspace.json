@@ -23,6 +23,9 @@
 		},
 		"oryzaworkspce-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"value": "https://oryzadatalake.dfs.core.windows.net"
+		},
+		"Trigger new file_properties_typeProperties_scope": {
+			"value": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzadatalake"
 		}
 	}
 }
