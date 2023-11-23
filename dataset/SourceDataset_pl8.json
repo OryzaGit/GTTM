@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "output_2023_11_23.parquet",
+				"fileName": "log_2023_11_22.parquet",
 				"folderPath": "synapse/traffic-log",
 				"fileSystem": "oryzafiledatalake"
 			},
