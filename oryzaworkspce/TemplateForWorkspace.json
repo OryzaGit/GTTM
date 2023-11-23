@@ -37,13 +37,13 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/CopyPipelineTrafficLog')]",
+			"name": "[concat(parameters('workspaceName'), '/CopyPipelineLogT')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy_897",
+						"name": "Copy_pl8",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -68,7 +68,12 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": false,
+									"recursive": true,
+									"wildcardFolderPath": "synapse/traffic-log",
+									"wildcardFileName": {
+										"value": "@concat('output_',formatDateTime(pipeline().TriggerTime,'yyyy_MM_dd'),'.parquet')",
+										"type": "Expression"
+									},
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
@@ -155,7 +160,7 @@
 										},
 										"sink": {
 											"name": "Speed",
-											"type": "Int32"
+											"type": "Int64"
 										}
 									},
 									{
@@ -165,7 +170,7 @@
 										},
 										"sink": {
 											"name": "Lane",
-											"type": "Int32"
+											"type": "Int64"
 										}
 									},
 									{
@@ -175,7 +180,7 @@
 										},
 										"sink": {
 											"name": "IsWrongLane",
-											"type": "Boolean"
+											"type": "Int64"
 										}
 									},
 									{
@@ -185,7 +190,7 @@
 										},
 										"sink": {
 											"name": "IsOverload",
-											"type": "Boolean"
+											"type": "Int64"
 										}
 									},
 									{
@@ -205,7 +210,7 @@
 										},
 										"sink": {
 											"name": "IsOversize",
-											"type": "Boolean"
+											"type": "Int64"
 										}
 									},
 									{
@@ -225,7 +230,7 @@
 										},
 										"sink": {
 											"name": "VehicleLength",
-											"type": "Int32"
+											"type": "Int64"
 										}
 									},
 									{
@@ -235,7 +240,7 @@
 										},
 										"sink": {
 											"name": "VehicleWidth",
-											"type": "Int32"
+											"type": "Int64"
 										}
 									},
 									{
@@ -245,7 +250,7 @@
 										},
 										"sink": {
 											"name": "VehicleHeight",
-											"type": "Int32"
+											"type": "Int64"
 										}
 									},
 									{
@@ -363,14 +368,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "SourceDataset_897",
+								"referenceName": "SourceDataset_pl8",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "DestinationDataset_897",
+								"referenceName": "DestinationDataset_pl8",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -383,8 +388,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/SourceDataset_897')]",
-				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_897')]"
+				"[concat(variables('workspaceId'), '/datasets/SourceDataset_pl8')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_pl8')]"
 			]
 		},
 		{
@@ -1221,6 +1226,153 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_pl8')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "Time",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "PlateNo",
+						"type": "varchar"
+					},
+					{
+						"name": "PlateColor",
+						"type": "varchar"
+					},
+					{
+						"name": "VehicleType",
+						"type": "varchar"
+					},
+					{
+						"name": "VehicleColor",
+						"type": "varchar"
+					},
+					{
+						"name": "VehicleModel",
+						"type": "varchar"
+					},
+					{
+						"name": "Speed",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Lane",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "IsWrongLane",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "IsOverload",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "WeightOverload",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsOversize",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "VolumeOversize",
+						"type": "varchar"
+					},
+					{
+						"name": "VehicleLength",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "VehicleWidth",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "VehicleHeight",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "EventTraffic",
+						"type": "varchar"
+					},
+					{
+						"name": "Hash",
+						"type": "varchar"
+					},
+					{
+						"name": "ExtraData",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ID",
+						"type": "varchar"
+					},
+					{
+						"name": "CreatedAt",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "UpdatedAt",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "DeletedAt",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "AfterImg",
+						"type": "varchar"
+					},
+					{
+						"name": "BeforeImg",
+						"type": "varchar"
+					},
+					{
+						"name": "BigImg",
+						"type": "varchar"
+					},
+					{
+						"name": "SmallImg",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TrafficLog"
+				},
+				"sqlPool": {
+					"referenceName": "OryzaPoolDemo",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/OryzaPoolDemo')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_sow')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -1398,6 +1550,141 @@
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/SourceDataset_897')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "output_2023_11_23.parquet",
+						"folderPath": "synapse/traffic-log",
+						"fileSystem": "oryzafiledatalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "Time",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "PlateNo",
+						"type": "UTF8"
+					},
+					{
+						"name": "PlateColor",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleType",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleColor",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleModel",
+						"type": "UTF8"
+					},
+					{
+						"name": "Speed",
+						"type": "INT64"
+					},
+					{
+						"name": "Lane",
+						"type": "INT64"
+					},
+					{
+						"name": "IsWrongLane",
+						"type": "BOOLEAN"
+					},
+					{
+						"name": "IsOverload",
+						"type": "BOOLEAN"
+					},
+					{
+						"name": "WeightOverload",
+						"type": "INT64"
+					},
+					{
+						"name": "IsOversize",
+						"type": "BOOLEAN"
+					},
+					{
+						"name": "VolumeOversize",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleLength",
+						"type": "INT64"
+					},
+					{
+						"name": "VehicleWidth",
+						"type": "INT64"
+					},
+					{
+						"name": "VehicleHeight",
+						"type": "INT64"
+					},
+					{
+						"name": "EventTraffic",
+						"type": "UTF8"
+					},
+					{
+						"name": "Hash",
+						"type": "UTF8"
+					},
+					{
+						"name": "ExtraData",
+						"type": "UTF8"
+					},
+					{
+						"name": "ID",
+						"type": "UTF8"
+					},
+					{
+						"name": "CreatedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "UpdatedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "DeletedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "AfterImg",
+						"type": "UTF8"
+					},
+					{
+						"name": "BeforeImg",
+						"type": "UTF8"
+					},
+					{
+						"name": "BigImg",
+						"type": "UTF8"
+					},
+					{
+						"name": "SmallImg",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SourceDataset_pl8')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -1739,7 +2026,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "\nCREATE TABLE TrafficViolation (\n    LogId varchar(50),\n    ViolationPatternId varchar(50),\n    StatusId varchar(50),\n    DocumentNumber varchar(50),\n    OperationTeam varchar(100),\n    Dear varchar(100),\n    VehicleOwner varchar(100), \n    DOB datetime,\n    Address varchar(255),\n    LocationViolation varchar(255),\n    Description varchar(1000),\n    Coordinate varchar(50),\n    SettlementAgency varchar(100),\n    DateTranfer datetime,\n    DateSolving datetime,\n    ExtraData varchar(4000),\n    ID varchar(50),\n    CreatedAt datetime,\n    UpdatedAt datetime, \n    DeletedAt datetime\n)\nCREATE TABLE TrafficLog (\n    Time datetime, \n    PlateNo varchar(20),\n    PlateColor varchar(100),\n    VehicleType varchar(100),\n    VehicleColor varchar(100),\n    VehicleModel varchar(100),\n    Speed int,\n    Lane int,\n    IsWrongLane bit,\n    IsOverload bit, \n    WeightOverload int,\n    IsOversize bit,\n    VolumeOversize varchar(100),\n    VehicleLength int,\n    VehicleWidth int, \n    VehicleHeight int,\n    EventTraffic varchar(255),\n    Hash varchar(50),\n    ExtraData NVARCHAR(4000),\n    ID varchar(50),\n    CreatedAt datetime,\n    UpdatedAt datetime, \n    DeletedAt datetime,\n    AfterImg varchar(255),\n    BeforeImg varchar(255), \n    BigImg varchar(255),\n    SmallImg varchar(255)\n)",
+					"query": "\nCREATE TABLE TrafficViolation (\n    LogId varchar(50),\n    ViolationPatternId varchar(50),\n    StatusId varchar(50),\n    DocumentNumber varchar(50),\n    OperationTeam varchar(100),\n    Dear varchar(100),\n    VehicleOwner varchar(100), \n    DOB datetime,\n    Address varchar(255),\n    LocationViolation varchar(255),\n    Description varchar(1000),\n    Coordinate varchar(50),\n    SettlementAgency varchar(100),\n    DateTranfer datetime,\n    DateSolving datetime,\n    ExtraData varchar(4000),\n    ID varchar(50),\n    CreatedAt datetime,\n    UpdatedAt datetime, \n    DeletedAt datetime\n)\nCREATE TABLE TrafficLog (\n    Time datetime, \n    PlateNo varchar(20),\n    PlateColor varchar(100),\n    VehicleType varchar(100),\n    VehicleColor varchar(100),\n    VehicleModel varchar(100),\n    Speed bigint,\n    Lane bigint,\n    IsWrongLane bit,\n    IsOverload bit, \n    WeightOverload bigint,\n    IsOversize bit,\n    VolumeOversize varchar(100),\n    VehicleLength bigint,\n    VehicleWidth bigint, \n    VehicleHeight bigint,\n    EventTraffic varchar(255),\n    Hash varchar(50),\n    ExtraData NVARCHAR(4000),\n    ID varchar(50),\n    CreatedAt datetime,\n    UpdatedAt datetime, \n    DeletedAt datetime,\n    AfterImg varchar(255),\n    BeforeImg varchar(255), \n    BigImg varchar(255),\n    SmallImg varchar(255)\n)",
 					"metadata": {
 						"language": "sql"
 					},
