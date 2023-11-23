@@ -29,6 +29,8 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
+							"wildcardFolderPath": "synapse/traffic-log",
+							"wildcardFileName": "@concat('log_',formatDateTime(pipeline().TriggerTime,'yyyy_MM_dd'),'.parquet')",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
