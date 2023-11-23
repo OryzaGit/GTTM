@@ -1,5 +1,5 @@
 {
-	"name": "CopyPipeline_897",
+	"name": "CopyPipelineTrafficLog",
 	"properties": {
 		"activities": [
 			{
@@ -28,8 +28,13 @@
 						"type": "ParquetSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
+							"recursive": false,
 							"modifiedDatetimeStart": null,
+							"wildcardFolderPath": "synapse/traffic-log",
+							"wildcardFileName": {
+								"value": "@concat('output_',formatDateTime(pipeline().TriggerName,'yyyy_MM_dd'),'.parquet')",
+								"type": "Expression"
+							},
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
