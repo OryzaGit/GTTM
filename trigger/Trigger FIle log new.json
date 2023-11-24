@@ -9,6 +9,12 @@
 					"referenceName": "CopyPipelineLogT",
 					"type": "PipelineReference"
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "CopyPipeline_sow",
+					"type": "PipelineReference"
+				}
 			}
 		],
 		"type": "BlobEventsTrigger",
