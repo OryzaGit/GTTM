@@ -1,0 +1,17 @@
+{
+	"name": "All",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 15,
+				"startTime": "2023-11-14T05:26:00",
+				"timeZone": "SE Asia Standard Time"
+			}
+		}
+	}
+}
