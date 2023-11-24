@@ -9,12 +9,6 @@
 					"referenceName": "Pipeline 1",
 					"type": "PipelineReference"
 				}
-			},
-			{
-				"pipelineReference": {
-					"referenceName": "CopyPipelineLogT",
-					"type": "PipelineReference"
-				}
 			}
 		],
 		"type": "ScheduleTrigger",
