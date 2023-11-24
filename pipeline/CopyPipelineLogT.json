@@ -31,7 +31,7 @@
 							"recursive": true,
 							"wildcardFolderPath": "synapse/traffic-log",
 							"wildcardFileName": {
-								"value": "@concat('log_',formatDateTime(pipeline().TriggerTime,'yyyy_MM_dd'),'.parquet')",
+								"value": "@concat('log_',formatDateTime(addDays(pipeline().TriggerTime,-1),'yyyy_MM_dd'),'.parquet')\n",
 								"type": "Expression"
 							},
 							"enablePartitionDiscovery": false
@@ -340,11 +340,6 @@
 				]
 			}
 		],
-		"variables": {
-			"namefile": {
-				"type": "String"
-			}
-		},
 		"annotations": []
 	}
 }
