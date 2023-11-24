@@ -6,6 +6,7 @@
 		"pipelines": [],
 		"type": "BlobEventsTrigger",
 		"typeProperties": {
+			"blobPathBeginsWith": "/oryzafiledatalake/blobs/",
 			"blobPathEndsWith": ".parquet",
 			"ignoreEmptyBlobs": true,
 			"scope": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzadatalake",
