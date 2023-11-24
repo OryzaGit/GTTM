@@ -49,7 +49,14 @@
 					{
 						"name": "Copy_pl8",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Skipped"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -75,7 +82,7 @@
 									"recursive": true,
 									"wildcardFolderPath": "synapse/traffic-log",
 									"wildcardFileName": {
-										"value": "@concat('log_',formatDateTime(pipeline().TriggerTime,'yyyy_MM_dd'),'.parquet')",
+										"value": "@variables('namefile')",
 										"type": "Expression"
 									},
 									"enablePartitionDiscovery": false
@@ -384,10 +391,32 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "namefile",
+							"value": {
+								"value": "@concat('log_',formatDateTime(pipeline().TriggerTime,'yyyy_MM_dd'),'.parquet')",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"namefile": {
+						"type": "String"
+					}
 				},
 				"annotations": []
 			},
@@ -2159,18 +2188,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/OryzaPoolDemo')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "southeastasia"
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/OryzaSpark')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
@@ -2190,6 +2207,18 @@
 				"sparkVersion": "3.3",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "southeastasia"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/OryzaPoolDemo')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
