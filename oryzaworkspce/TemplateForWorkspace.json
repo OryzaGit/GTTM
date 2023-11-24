@@ -2017,7 +2017,7 @@
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/oryzafiledatalake/blobs/",
+					"blobPathBeginsWith": "/oryzafiledatalake/blobs/synapse/traffic-log",
 					"blobPathEndsWith": ".parquet",
 					"ignoreEmptyBlobs": true,
 					"scope": "[parameters('Trigger FIle log new_properties_typeProperties_scope')]",
@@ -2048,8 +2048,7 @@
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/oryzafiledatalake/blobs/",
-					"blobPathEndsWith": ".parquet",
+					"blobPathEndsWith": ".txt",
 					"ignoreEmptyBlobs": true,
 					"scope": "[parameters('Trigger new file_properties_typeProperties_scope')]",
 					"events": [
