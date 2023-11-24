@@ -2077,6 +2077,13 @@
 							"type": "PipelineReference"
 						},
 						"parameters": {}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "CopyPipelineLogT",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
 					}
 				],
 				"type": "ScheduleTrigger",
@@ -2090,7 +2097,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/pipelines/Pipeline 1')]"
+				"[concat(variables('workspaceId'), '/pipelines/Pipeline 1')]",
+				"[concat(variables('workspaceId'), '/pipelines/CopyPipelineLogT')]"
 			]
 		},
 		{
