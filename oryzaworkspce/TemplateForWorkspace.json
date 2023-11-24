@@ -31,6 +31,10 @@
 			"type": "string",
 			"defaultValue": "https://oryzadatalake.dfs.core.windows.net"
 		},
+		"Trigger FIle log new_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzadatalake"
+		},
 		"Trigger new file_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzadatalake"
@@ -75,7 +79,7 @@
 									"recursive": true,
 									"wildcardFolderPath": "synapse/traffic-log",
 									"wildcardFileName": {
-										"value": "@concat('log_',formatDateTime(addDays(pipeline().TriggerTime,-1),'yyyy_MM_dd'),'.parquet')\n",
+										"value": "@triggerBody().fileName",
 										"type": "Expression"
 									},
 									"enablePartitionDiscovery": false
@@ -1996,12 +2000,43 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Trigger FIle log new')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "CopyPipeline_sow",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/oryzafiledatalake/blobs/",
+					"blobPathEndsWith": ".parquet",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('Trigger FIle log new_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/CopyPipeline_sow')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Trigger new file')]",
 			"type": "Microsoft.Synapse/workspaces/triggers",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -2013,7 +2048,7 @@
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/oryzafiledatalake/blobs/synapse/traffic-log",
+					"blobPathBeginsWith": "/oryzafiledatalake/blobs/",
 					"blobPathEndsWith": ".parquet",
 					"ignoreEmptyBlobs": true,
 					"scope": "[parameters('Trigger new file_properties_typeProperties_scope')]",
