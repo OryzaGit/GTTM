@@ -1,0 +1,24 @@
+{
+	"name": "Trigger Minute",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Pipeline 1",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 1,
+				"startTime": "2023-11-13T08:51:00",
+				"timeZone": "SE Asia Standard Time"
+			}
+		}
+	}
+}
