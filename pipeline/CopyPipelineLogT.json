@@ -1,9 +1,9 @@
 {
-	"name": "CopyPipelineTrafficLog",
+	"name": "CopyPipelineLogT",
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_897",
+				"name": "Copy_pl8",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -28,13 +28,9 @@
 						"type": "ParquetSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
-							"recursive": false,
-							"modifiedDatetimeStart": null,
+							"recursive": true,
 							"wildcardFolderPath": "synapse/traffic-log",
-							"wildcardFileName": {
-								"value": "@concat('output_',formatDateTime(pipeline().TriggerName,'yyyy_MM_dd'),'.parquet')",
-								"type": "Expression"
-							},
+							"wildcardFileName": "@concat('log_',formatDateTime(pipeline().TriggerTime,'yyyy_MM_dd'),'.parquet')",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -121,7 +117,7 @@
 								},
 								"sink": {
 									"name": "Speed",
-									"type": "Int32"
+									"type": "Int64"
 								}
 							},
 							{
@@ -131,7 +127,7 @@
 								},
 								"sink": {
 									"name": "Lane",
-									"type": "Int32"
+									"type": "Int64"
 								}
 							},
 							{
@@ -141,7 +137,7 @@
 								},
 								"sink": {
 									"name": "IsWrongLane",
-									"type": "Boolean"
+									"type": "Int64"
 								}
 							},
 							{
@@ -151,7 +147,7 @@
 								},
 								"sink": {
 									"name": "IsOverload",
-									"type": "Boolean"
+									"type": "Int64"
 								}
 							},
 							{
@@ -171,7 +167,7 @@
 								},
 								"sink": {
 									"name": "IsOversize",
-									"type": "Boolean"
+									"type": "Int64"
 								}
 							},
 							{
@@ -191,7 +187,7 @@
 								},
 								"sink": {
 									"name": "VehicleLength",
-									"type": "Int32"
+									"type": "Int64"
 								}
 							},
 							{
@@ -201,7 +197,7 @@
 								},
 								"sink": {
 									"name": "VehicleWidth",
-									"type": "Int32"
+									"type": "Int64"
 								}
 							},
 							{
@@ -211,7 +207,7 @@
 								},
 								"sink": {
 									"name": "VehicleHeight",
-									"type": "Int32"
+									"type": "Int64"
 								}
 							},
 							{
@@ -329,13 +325,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "SourceDataset_897",
+						"referenceName": "SourceDataset_pl8",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DestinationDataset_897",
+						"referenceName": "DestinationDataset_pl8",
 						"type": "DatasetReference"
 					}
 				]

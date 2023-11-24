@@ -1,0 +1,142 @@
+{
+	"name": "DestinationDataset_pl8",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "Time",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PlateNo",
+				"type": "varchar"
+			},
+			{
+				"name": "PlateColor",
+				"type": "varchar"
+			},
+			{
+				"name": "VehicleType",
+				"type": "varchar"
+			},
+			{
+				"name": "VehicleColor",
+				"type": "varchar"
+			},
+			{
+				"name": "VehicleModel",
+				"type": "varchar"
+			},
+			{
+				"name": "Speed",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "Lane",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "IsWrongLane",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "IsOverload",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "WeightOverload",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsOversize",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "VolumeOversize",
+				"type": "varchar"
+			},
+			{
+				"name": "VehicleLength",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "VehicleWidth",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "VehicleHeight",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "EventTraffic",
+				"type": "varchar"
+			},
+			{
+				"name": "Hash",
+				"type": "varchar"
+			},
+			{
+				"name": "ExtraData",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ID",
+				"type": "varchar"
+			},
+			{
+				"name": "CreatedAt",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UpdatedAt",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DeletedAt",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "AfterImg",
+				"type": "varchar"
+			},
+			{
+				"name": "BeforeImg",
+				"type": "varchar"
+			},
+			{
+				"name": "BigImg",
+				"type": "varchar"
+			},
+			{
+				"name": "SmallImg",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TrafficLog"
+		},
+		"sqlPool": {
+			"referenceName": "OryzaPoolDemo",
+			"type": "SqlPoolReference"
+		}
+	}
+}

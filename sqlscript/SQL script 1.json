@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 1",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) [ID]\n,[Time]\n,[PlateColor]\n,[VehicleType]\n,[VehicleColor]\n,[VehicleModel]\n,[Speed]\n,[IsWrongLane]\n,[SmallImg]\n,[BigImg]\n,[Weight]\n,[CamName]\n,[Accuracy]\n,[IsOverload]\n,[WeightOverload]\n,[IsOversize]\n,[VehicleLength]\n,[VehicleWidth]\n,[VehicleHeight]\n,[EventTraffic]\n,[BeforeImg]\n,[AfterImg]\n,[CreateAt]\n,[UpdateAt]\n,[IsDelete]\n,[Hash]\n,[PlateNo]\n,[Lane]\n,[CamIpAddress]\n,[VolumeOversize]\n FROM [dbo].[Logs]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "OryzaPoolDemo",
+				"poolName": "OryzaPoolDemo"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
