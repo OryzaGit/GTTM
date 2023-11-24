@@ -51,16 +51,6 @@
 						"mappings": [
 							{
 								"source": {
-									"name": "Time",
-									"type": "DateTime"
-								},
-								"sink": {
-									"name": "Time",
-									"type": "DateTime"
-								}
-							},
-							{
-								"source": {
 									"name": "PlateNo",
 									"type": "String"
 								},
