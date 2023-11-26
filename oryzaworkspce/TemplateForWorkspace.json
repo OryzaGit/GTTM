@@ -103,241 +103,11 @@
 								"mappings": [
 									{
 										"source": {
-											"name": "Time",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "Time",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "PlateNo",
-											"type": "String"
-										},
-										"sink": {
-											"name": "PlateNo",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "PlateColor",
-											"type": "String"
-										},
-										"sink": {
-											"name": "PlateColor",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleType",
-											"type": "String"
-										},
-										"sink": {
-											"name": "VehicleType",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleColor",
-											"type": "String"
-										},
-										"sink": {
-											"name": "VehicleColor",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleModel",
-											"type": "String"
-										},
-										"sink": {
-											"name": "VehicleModel",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Speed",
-											"type": "Int64"
-										},
-										"sink": {
-											"name": "Speed",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"name": "Lane",
-											"type": "Int64"
-										},
-										"sink": {
-											"name": "Lane",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"name": "WeightOverload",
-											"type": "Int64"
-										},
-										"sink": {
-											"name": "WeightOverload",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "VolumeOversize",
-											"type": "String"
-										},
-										"sink": {
-											"name": "VolumeOversize",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleLength",
-											"type": "Int64"
-										},
-										"sink": {
-											"name": "VehicleLength",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleWidth",
-											"type": "Int64"
-										},
-										"sink": {
-											"name": "VehicleWidth",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleHeight",
-											"type": "Int64"
-										},
-										"sink": {
-											"name": "VehicleHeight",
-											"type": "Int64"
-										}
-									},
-									{
-										"source": {
-											"name": "EventTraffic",
-											"type": "String"
-										},
-										"sink": {
-											"name": "EventTraffic",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Hash",
-											"type": "String"
-										},
-										"sink": {
-											"name": "Hash",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "ExtraData",
-											"type": "String"
-										},
-										"sink": {
-											"name": "ExtraData",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
 											"name": "ID",
 											"type": "String"
 										},
 										"sink": {
 											"name": "ID",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "CreatedAt",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "CreatedAt",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "UpdatedAt",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "UpdatedAt",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "DeletedAt",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "DeletedAt",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "AfterImg",
-											"type": "String"
-										},
-										"sink": {
-											"name": "AfterImg",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "BeforeImg",
-											"type": "String"
-										},
-										"sink": {
-											"name": "BeforeImg",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "BigImg",
-											"type": "String"
-										},
-										"sink": {
-											"name": "BigImg",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "SmallImg",
-											"type": "String"
-										},
-										"sink": {
-											"name": "SmallImg",
 											"type": "String"
 										}
 									}
@@ -3030,6 +2800,18 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/OryzaPoolDemo')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "southeastasia"
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/OryzaSpark')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
@@ -3049,18 +2831,6 @@
 				"sparkVersion": "3.3",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": false,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "southeastasia"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/OryzaPoolDemo')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
