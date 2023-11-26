@@ -130,42 +130,12 @@
 							},
 							{
 								"source": {
-									"name": "IsWrongLane",
-									"type": "Boolean"
-								},
-								"sink": {
-									"name": "IsWrongLane",
-									"type": "Int64"
-								}
-							},
-							{
-								"source": {
-									"name": "IsOverload",
-									"type": "Boolean"
-								},
-								"sink": {
-									"name": "IsOverload",
-									"type": "Int64"
-								}
-							},
-							{
-								"source": {
 									"name": "WeightOverload",
 									"type": "Int64"
 								},
 								"sink": {
 									"name": "WeightOverload",
 									"type": "Int32"
-								}
-							},
-							{
-								"source": {
-									"name": "IsOversize",
-									"type": "Boolean"
-								},
-								"sink": {
-									"name": "IsOversize",
-									"type": "Int64"
 								}
 							},
 							{
