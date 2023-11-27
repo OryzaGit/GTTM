@@ -51,19 +51,19 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzadatalake"
 		},
-		"Trigger_event_1_properties_Pipeline_linh_parameters_triggeer_filename": {
-			"type": "string",
-			"defaultValue": "@trigger.Body().fileName"
-		},
-		"Trigger_event_1_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzastorage"
-		},
 		"Trigger_1_properties_Pipeline_linh_parameters_triggeer_filename": {
 			"type": "string",
 			"defaultValue": "@triggerBody().fileName"
 		},
 		"Trigger_1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzastorage"
+		},
+		"Trigger_event_1_properties_Pipeline_linh_parameters_triggeer_filename": {
+			"type": "string",
+			"defaultValue": "@trigger.Body().fileName"
+		},
+		"Trigger_event_1_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzastorage"
 		}
@@ -72,6 +72,294 @@
 		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/CopyLog2')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy_2tg",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "oryzafiledatalake/synapse/traffic-log/log_2023_11_25.parquet"
+							},
+							{
+								"name": "Destination",
+								"value": "dbo.TrafficLog"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "ParquetReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlPoolSink",
+								"allowCopyCommand": true,
+								"copyCommandSettings": {}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_2tg",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_2tg",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/SourceDataset_2tg')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_2tg')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PipelineGetFileLog')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Parquet1",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "ParquetReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Filter1",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata1').output.childItems",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@endswith(item().name,'.parquet')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Filter1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter1').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Lookup1",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlPoolSource",
+											"sqlReaderQuery": {
+												"value": "select Name,Type from LogsFile\nwhere Name = '@{item().name}'",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00"
+										},
+										"dataset": {
+											"referenceName": "SqlPoolTable1",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									}
+								},
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "Lookup1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(activity('Lookup1').output?.firstRow,null)",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "Wait2",
+												"type": "Wait",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"waitTimeInSeconds": 1
+												}
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "Copy_2tg",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [
+													{
+														"name": "Source",
+														"value": "oryzafiledatalake/synapse/traffic-log/log_2023_11_25.parquet"
+													},
+													{
+														"name": "Destination",
+														"value": "dbo.TrafficLog"
+													}
+												],
+												"typeProperties": {
+													"source": {
+														"type": "ParquetSource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true,
+															"wildcardFolderPath": "synapse/traffic-log",
+															"wildcardFileName": "item().name",
+															"enablePartitionDiscovery": false
+														},
+														"formatSettings": {
+															"type": "ParquetReadSettings"
+														}
+													},
+													"sink": {
+														"type": "SqlPoolSink",
+														"allowCopyCommand": true,
+														"copyCommandSettings": {}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "SourceDataset_2tg",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "DestinationDataset_2tg",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"isSucess": {
+						"type": "Boolean"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Parquet1')]",
+				"[concat(variables('workspaceId'), '/datasets/SqlPoolTable1')]",
+				"[concat(variables('workspaceId'), '/datasets/SourceDataset_2tg')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_2tg')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/Pipeline_linh')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
@@ -266,6 +554,27 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_2tg')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TrafficLog"
+				},
+				"sqlPool": {
+					"referenceName": "OryzaPoolDemo",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/OryzaPoolDemo')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_4pj')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -409,6 +718,142 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "Logs"
+				},
+				"sqlPool": {
+					"referenceName": "OryzaPoolDemo",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/OryzaPoolDemo')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_5dl')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "Time",
+						"type": "date"
+					},
+					{
+						"name": "PlateNo",
+						"type": "varchar"
+					},
+					{
+						"name": "PlateColor",
+						"type": "varchar"
+					},
+					{
+						"name": "VehicleType",
+						"type": "varchar"
+					},
+					{
+						"name": "VehicleColor",
+						"type": "varchar"
+					},
+					{
+						"name": "VehicleModel",
+						"type": "varchar"
+					},
+					{
+						"name": "Speed",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Lane",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsWrongLane",
+						"type": "bit"
+					},
+					{
+						"name": "IsOverload",
+						"type": "bit"
+					},
+					{
+						"name": "WeightOverload",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsOversize",
+						"type": "bit"
+					},
+					{
+						"name": "VolumeOversize",
+						"type": "varchar"
+					},
+					{
+						"name": "VehicleLength",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "VehicleWidth",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "VehicleHeight",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "EventTraffic",
+						"type": "varchar"
+					},
+					{
+						"name": "Hash",
+						"type": "varchar"
+					},
+					{
+						"name": "ExtraData",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ID",
+						"type": "varchar"
+					},
+					{
+						"name": "CreatedAt",
+						"type": "date"
+					},
+					{
+						"name": "UpdatedAt",
+						"type": "date"
+					},
+					{
+						"name": "DeletedAt",
+						"type": "date"
+					},
+					{
+						"name": "AfterImg",
+						"type": "varchar"
+					},
+					{
+						"name": "BeforeImg",
+						"type": "varchar"
+					},
+					{
+						"name": "BigImg",
+						"type": "varchar"
+					},
+					{
+						"name": "SmallImg",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TrafficLog"
 				},
 				"sqlPool": {
 					"referenceName": "OryzaPoolDemo",
@@ -565,6 +1010,27 @@
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_g6h')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TrafficLog"
+				},
+				"sqlPool": {
+					"referenceName": "OryzaPoolDemo",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/OryzaPoolDemo')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_lkq')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -921,6 +1387,166 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Parquet1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "synapse/traffic-log",
+						"fileSystem": "oryzafiledatalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "Time",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "PlateNo",
+						"type": "UTF8"
+					},
+					{
+						"name": "PlateColor",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleType",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleColor",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleModel",
+						"type": "UTF8"
+					},
+					{
+						"name": "Speed",
+						"type": "INT32"
+					},
+					{
+						"name": "Lane",
+						"type": "INT32"
+					},
+					{
+						"name": "IsWrongLane",
+						"type": "BOOLEAN"
+					},
+					{
+						"name": "IsOverload",
+						"type": "BOOLEAN"
+					},
+					{
+						"name": "WeightOverload",
+						"type": "INT32"
+					},
+					{
+						"name": "IsOversize",
+						"type": "BOOLEAN"
+					},
+					{
+						"name": "VolumeOversize",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleLength",
+						"type": "INT32"
+					},
+					{
+						"name": "VehicleWidth",
+						"type": "INT32"
+					},
+					{
+						"name": "VehicleHeight",
+						"type": "INT32"
+					},
+					{
+						"name": "EventTraffic",
+						"type": "UTF8"
+					},
+					{
+						"name": "Hash",
+						"type": "UTF8"
+					},
+					{
+						"name": "ExtraData",
+						"type": "UTF8"
+					},
+					{
+						"name": "ID",
+						"type": "UTF8"
+					},
+					{
+						"name": "CreatedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "UpdatedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "DeletedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "AfterImg",
+						"type": "UTF8"
+					},
+					{
+						"name": "BeforeImg",
+						"type": "UTF8"
+					},
+					{
+						"name": "BigImg",
+						"type": "UTF8"
+					},
+					{
+						"name": "SmallImg",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SourceDataset_2tg')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "log_2023_11_25.parquet",
+						"folderPath": "synapse/traffic-log",
+						"fileSystem": "oryzafiledatalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SourceDataset_4pj')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -1068,6 +1694,141 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SourceDataset_5dl')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "log_2023_11_25.parquet",
+						"folderPath": "synapse/traffic-log",
+						"fileSystem": "oryzafiledatalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "Time",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "PlateNo",
+						"type": "UTF8"
+					},
+					{
+						"name": "PlateColor",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleType",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleColor",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleModel",
+						"type": "UTF8"
+					},
+					{
+						"name": "Speed",
+						"type": "INT32"
+					},
+					{
+						"name": "Lane",
+						"type": "INT32"
+					},
+					{
+						"name": "IsWrongLane",
+						"type": "BOOLEAN"
+					},
+					{
+						"name": "IsOverload",
+						"type": "BOOLEAN"
+					},
+					{
+						"name": "WeightOverload",
+						"type": "INT32"
+					},
+					{
+						"name": "IsOversize",
+						"type": "BOOLEAN"
+					},
+					{
+						"name": "VolumeOversize",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleLength",
+						"type": "INT32"
+					},
+					{
+						"name": "VehicleWidth",
+						"type": "INT32"
+					},
+					{
+						"name": "VehicleHeight",
+						"type": "INT32"
+					},
+					{
+						"name": "EventTraffic",
+						"type": "UTF8"
+					},
+					{
+						"name": "Hash",
+						"type": "UTF8"
+					},
+					{
+						"name": "ExtraData",
+						"type": "UTF8"
+					},
+					{
+						"name": "ID",
+						"type": "UTF8"
+					},
+					{
+						"name": "CreatedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "UpdatedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "DeletedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "AfterImg",
+						"type": "UTF8"
+					},
+					{
+						"name": "BeforeImg",
+						"type": "UTF8"
+					},
+					{
+						"name": "BigImg",
+						"type": "UTF8"
+					},
+					{
+						"name": "SmallImg",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SourceDataset_897')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -1204,6 +1965,32 @@
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/SourceDataset_g6h')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "log_2023_11_25.parquet",
+						"folderPath": "synapse/traffic-log",
+						"fileSystem": "oryzafiledatalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SourceDataset_lkq')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -1701,6 +2488,48 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SqlPoolTable1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "varchar"
+					},
+					{
+						"name": "CreatedAt",
+						"type": "date"
+					},
+					{
+						"name": "UpdatedAt",
+						"type": "date"
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Type",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "LogsFile"
+				},
+				"sqlPool": {
+					"referenceName": "OryzaPoolDemo",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/OryzaPoolDemo')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/AzureBlobStorage1')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -1928,6 +2757,39 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Trigger_1')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Pipeline_linh",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"triggeer_filename": "[parameters('Trigger_1_properties_Pipeline_linh_parameters_triggeer_filename')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/source/blobs/data",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('Trigger_1_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/Pipeline_linh')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Trigger_event_1')]",
 			"type": "Microsoft.Synapse/workspaces/triggers",
 			"apiVersion": "2019-06-01-preview",
@@ -1996,6 +2858,26 @@
 			"properties": {
 				"content": {
 					"query": "SELECT TOP (100) [ID]\n,[Time]\n,[PlateColor]\n,[VehicleType]\n,[VehicleColor]\n,[VehicleModel]\n,[Speed]\n,[IsWrongLane]\n,[SmallImg]\n,[BigImg]\n,[Weight]\n,[CamName]\n,[Accuracy]\n,[IsOverload]\n,[WeightOverload]\n,[IsOversize]\n,[VehicleLength]\n,[VehicleWidth]\n,[VehicleHeight]\n,[EventTraffic]\n,[BeforeImg]\n,[AfterImg]\n,[CreateAt]\n,[UpdateAt]\n,[IsDelete]\n,[Hash]\n,[PlateNo]\n,[Lane]\n,[CamIpAddress]\n,[VolumeOversize]\n FROM [dbo].[Logs]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "OryzaPoolDemo",
+						"poolName": "OryzaPoolDemo"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 2')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP (100) [ID]\n,[Name]\n,[Type]\n,[CreatedAt]\n,[UpdatedAt]\n FROM [dbo].[LogsFile]",
 					"metadata": {
 						"language": "sql"
 					},
@@ -2128,39 +3010,6 @@
 			},
 			"dependsOn": [],
 			"location": "southeastasia"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/Trigger_1')]",
-			"type": "Microsoft.Synapse/workspaces/triggers",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "Pipeline_linh",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"triggeer_filename": "[parameters('Trigger_1_properties_Pipeline_linh_parameters_triggeer_filename')]"
-						}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/source/blobs/data",
-					"blobPathEndsWith": ".csv",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('Trigger_1_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/pipelines/Pipeline_linh')]"
-			]
 		}
 	]
 }
