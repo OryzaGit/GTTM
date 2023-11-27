@@ -1,0 +1,135 @@
+{
+	"name": "DestinationDataset_mjh",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "Time",
+				"type": "datetimeoffset",
+				"scale": 7
+			},
+			{
+				"name": "PlateNo",
+				"type": "varchar"
+			},
+			{
+				"name": "PlateColor",
+				"type": "varchar"
+			},
+			{
+				"name": "VehicleType",
+				"type": "varchar"
+			},
+			{
+				"name": "VehicleColor",
+				"type": "varchar"
+			},
+			{
+				"name": "VehicleModel",
+				"type": "varchar"
+			},
+			{
+				"name": "Speed",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Lane",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsWrongLane",
+				"type": "bit"
+			},
+			{
+				"name": "IsOverload",
+				"type": "bit"
+			},
+			{
+				"name": "WeightOverload",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsOversize",
+				"type": "bit"
+			},
+			{
+				"name": "VolumeOversize",
+				"type": "varchar"
+			},
+			{
+				"name": "VehicleLength",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "VehicleWidth",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "VehicleHeight",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EventTraffic",
+				"type": "varchar"
+			},
+			{
+				"name": "Hash",
+				"type": "varchar"
+			},
+			{
+				"name": "ExtraData",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ID",
+				"type": "varchar"
+			},
+			{
+				"name": "CreatedAt",
+				"type": "datetimeoffset",
+				"scale": 7
+			},
+			{
+				"name": "UpdatedAt",
+				"type": "datetimeoffset",
+				"scale": 7
+			},
+			{
+				"name": "DeletedAt",
+				"type": "datetimeoffset",
+				"scale": 7
+			},
+			{
+				"name": "AfterImg",
+				"type": "varchar"
+			},
+			{
+				"name": "BeforeImg",
+				"type": "varchar"
+			},
+			{
+				"name": "BigImg",
+				"type": "varchar"
+			},
+			{
+				"name": "SmallImg",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TrafficLog"
+		},
+		"sqlPool": {
+			"referenceName": "OryzaPoolDemo",
+			"type": "SqlPoolReference"
+		}
+	}
+}
