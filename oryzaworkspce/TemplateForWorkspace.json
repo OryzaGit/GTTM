@@ -58,6 +58,14 @@
 		"Trigger_event_1_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzastorage"
+		},
+		"Trigger_1_properties_Pipeline_linh_parameters_triggeer_filename": {
+			"type": "string",
+			"defaultValue": "@triggerBody().fileName"
+		},
+		"Trigger_1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzastorage"
 		}
 	},
 	"variables": {
@@ -135,7 +143,7 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"container": "sink",
-									"folder": "data_output",
+									"folder": "data_ouput",
 									"file": {
 										"value": "@pipeline().parameters.triggeer_filename",
 										"type": "Expression"
@@ -2120,6 +2128,39 @@
 			},
 			"dependsOn": [],
 			"location": "southeastasia"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Trigger_1')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Pipeline_linh",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"triggeer_filename": "[parameters('Trigger_1_properties_Pipeline_linh_parameters_triggeer_filename')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/source/blobs/data",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('Trigger_1_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/Pipeline_linh')]"
+			]
 		}
 	]
 }
