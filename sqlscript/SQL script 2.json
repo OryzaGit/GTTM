@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 2",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) [ID]\n,[Name]\n,[Type]\n,[CreatedAt]\n,[UpdatedAt]\n FROM [dbo].[LogsFile]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "OryzaPoolDemo",
+				"poolName": "OryzaPoolDemo"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
