@@ -7,6 +7,14 @@
 			"metadata": "Workspace name",
 			"defaultValue": "oryzaworkspce"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
+		},
 		"oryzaworkspce-WorkspaceDefaultSqlServer_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'oryzaworkspce-WorkspaceDefaultSqlServer'",
@@ -42,6 +50,14 @@
 		"Trigger new file_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzadatalake"
+		},
+		"Trigger_event_1_properties_Pipeline_linh_parameters_triggeer_filename": {
+			"type": "string",
+			"defaultValue": "@trigger.Body().fileName"
+		},
+		"Trigger_event_1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzastorage"
 		}
 	},
 	"variables": {
@@ -49,13 +65,13 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/CopyPipeline_4pj')]",
+			"name": "[concat(parameters('workspaceName'), '/Pipeline_linh')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy_4pj",
+						"name": "Copy data1",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -65,508 +81,23 @@
 							"secureOutput": false,
 							"secureInput": false
 						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "oryzafiledatalake/synapse/workspaces/oryzaworkspce/data-test/2023-11-14 15:55:38.313807.snappy.parquet"
-							},
-							{
-								"name": "Destination",
-								"value": "dbo.Logs"
-							}
-						],
+						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "ParquetSource",
+								"type": "DelimitedTextSource",
 								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": false,
-									"wildcardFolderPath": {
-										"value": "@pipeline().parameters.FolderPath",
-										"type": "Expression"
-									},
-									"wildcardFileName": {
-										"value": "@pipeline().parameters.NameFile",
-										"type": "Expression"
-									},
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "ParquetReadSettings"
-								}
-							},
-							"sink": {
-								"type": "SqlPoolSink",
-								"allowPolyBase": true,
-								"polyBaseSettings": {
-									"rejectValue": 0,
-									"rejectType": "value",
-									"useTypeDefault": true
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "ID",
-											"type": "String"
-										},
-										"sink": {
-											"name": "ID",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Time",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "Time",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "PlateColor",
-											"type": "String"
-										},
-										"sink": {
-											"name": "PlateColor",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleType",
-											"type": "String"
-										},
-										"sink": {
-											"name": "VehicleType",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleColor",
-											"type": "String"
-										},
-										"sink": {
-											"name": "VehicleColor",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleModel",
-											"type": "String"
-										},
-										"sink": {
-											"name": "VehicleModel",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Speed",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "Speed",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "IsWrongLane",
-											"type": "Boolean"
-										},
-										"sink": {
-											"name": "IsWrongLane",
-											"type": "Boolean"
-										}
-									},
-									{
-										"source": {
-											"name": "SmallImg",
-											"type": "String"
-										},
-										"sink": {
-											"name": "SmallImg",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "BigImg",
-											"type": "String"
-										},
-										"sink": {
-											"name": "BigImg",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Weight",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "Weight",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "CamName",
-											"type": "String"
-										},
-										"sink": {
-											"name": "CamName",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Accuracy",
-											"type": "Double"
-										},
-										"sink": {
-											"name": "Accuracy",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"name": "IsOverload",
-											"type": "Boolean"
-										},
-										"sink": {
-											"name": "IsOverload",
-											"type": "Boolean"
-										}
-									},
-									{
-										"source": {
-											"name": "WeightOverload",
-											"type": "Double"
-										},
-										"sink": {
-											"name": "WeightOverload",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"name": "IsOversize",
-											"type": "Boolean"
-										},
-										"sink": {
-											"name": "IsOversize",
-											"type": "Boolean"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleLength",
-											"type": "Double"
-										},
-										"sink": {
-											"name": "VehicleLength",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleWidth",
-											"type": "Double"
-										},
-										"sink": {
-											"name": "VehicleWidth",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleHeight",
-											"type": "Double"
-										},
-										"sink": {
-											"name": "VehicleHeight",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"name": "EventTraffic",
-											"type": "String"
-										},
-										"sink": {
-											"name": "EventTraffic",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "BeforeImg",
-											"type": "String"
-										},
-										"sink": {
-											"name": "BeforeImg",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "AfterImg",
-											"type": "String"
-										},
-										"sink": {
-											"name": "AfterImg",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "CreateAt",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "CreateAt",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "UpdateAt",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "UpdateAt",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "IsDelete",
-											"type": "Boolean"
-										},
-										"sink": {
-											"name": "IsDelete",
-											"type": "Boolean"
-										}
-									},
-									{
-										"source": {
-											"name": "Hash",
-											"type": "String"
-										},
-										"sink": {
-											"name": "Hash",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "PlateNo",
-											"type": "String"
-										},
-										"sink": {
-											"name": "PlateNo",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Lane",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "Lane",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "CamIpAddress",
-											"type": "String"
-										},
-										"sink": {
-											"name": "CamIpAddress",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VolumeOversize",
-											"type": "String"
-										},
-										"sink": {
-											"name": "VolumeOversize",
-											"type": "String"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SourceDataset_4pj",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DestinationDataset_4pj",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"FolderPath": {
-						"type": "string"
-					},
-					"NameFile": {
-						"type": "string"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/SourceDataset_4pj')]",
-				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_4pj')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/CopyPipeline_g6h')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy_g6h",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "oryzafiledatalake/synapse/traffic-log/log_2023_11_25.parquet"
-							},
-							{
-								"name": "Destination",
-								"value": "dbo.TrafficLog"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "ParquetSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
+									"type": "AzureBlobStorageReadSettings",
 									"recursive": true,
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
-									"type": "ParquetReadSettings"
-								}
-							},
-							"sink": {
-								"type": "SqlPoolSink",
-								"allowCopyCommand": true,
-								"copyCommandSettings": {}
-							},
-							"enableStaging": true,
-							"stagingSettings": {
-								"linkedServiceName": {
-									"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
-									"type": "LinkedServiceReference"
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SourceDataset_g6h",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DestinationDataset_g6h",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/SourceDataset_g6h')]",
-				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_g6h')]",
-				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/CopyPipeline_sow')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy_sow",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "oryzafiledatalake/synapse/workspaces/oryzaworkspce/data-test/part-00000-a6907cc8-71dc-4334-8d27-b8e8df6addbb-c000.snappy.parquet"
-							},
-							{
-								"name": "Destination",
-								"value": "oryzafiledatalake/synapse/workspaces/oryzaworkspce/copyfile"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "ParquetSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": false,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "ParquetReadSettings"
+									"type": "DelimitedTextReadSettings"
 								}
 							},
 							"sink": {
 								"type": "DelimitedTextSink",
 								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
+									"type": "AzureBlobStorageWriteSettings"
 								},
 								"formatSettings": {
 									"type": "DelimitedTextWriteSettings",
@@ -575,7 +106,6 @@
 								}
 							},
 							"enableStaging": false,
-							"validateDataConsistency": false,
 							"translator": {
 								"type": "TabularTranslator",
 								"typeConversion": true,
@@ -587,455 +117,145 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "SourceDataset_sow",
+								"referenceName": "DelimitedText2",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"container": "source",
+									"folder": "data",
+									"file": {
+										"value": "@pipeline().parameters.triggeer_filename",
+										"type": "Expression"
+									}
+								}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "DestinationDataset_sow",
+								"referenceName": "DelimitedText2",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"container": "sink",
+									"folder": "data_output",
+									"file": {
+										"value": "@pipeline().parameters.triggeer_filename",
+										"type": "Expression"
+									}
+								}
 							}
 						]
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"triggeer_filename": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DelimitedText2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DelimitedText1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container": {
+						"type": "string"
+					},
+					"folder": {
+						"type": "string"
+					},
+					"file": {
+						"type": "string"
+					}
 				},
 				"annotations": [],
-				"lastPublishTime": "2023-11-14T04:30:04Z"
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/SourceDataset_sow')]",
-				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_sow')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/CopyPipeline_tng')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy_tng",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().file",
+							"type": "Expression"
 						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "oryzafiledatalake/synapse/traffic-log/log_2023_11_23.parquet"
-							},
-							{
-								"name": "Destination",
-								"value": ".log_2023_11_23"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "ParquetSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "ParquetReadSettings"
-								}
-							},
-							"sink": {
-								"type": "SqlPoolSink",
-								"allowPolyBase": true,
-								"polyBaseSettings": {
-									"rejectValue": 0,
-									"rejectType": "value",
-									"useTypeDefault": true
-								},
-								"tableOption": "autoCreate"
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "PlateNo",
-											"type": "String"
-										},
-										"sink": {
-											"name": "PlateNo",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "PlateColor",
-											"type": "String"
-										},
-										"sink": {
-											"name": "PlateColor",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleType",
-											"type": "String"
-										},
-										"sink": {
-											"name": "VehicleType",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleColor",
-											"type": "String"
-										},
-										"sink": {
-											"name": "VehicleColor",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleModel",
-											"type": "String"
-										},
-										"sink": {
-											"name": "VehicleModel",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Speed",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "Speed",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "Lane",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "Lane",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "IsWrongLane",
-											"type": "Boolean"
-										},
-										"sink": {
-											"name": "IsWrongLane",
-											"type": "Boolean"
-										}
-									},
-									{
-										"source": {
-											"name": "IsOverload",
-											"type": "Boolean"
-										},
-										"sink": {
-											"name": "IsOverload",
-											"type": "Boolean"
-										}
-									},
-									{
-										"source": {
-											"name": "WeightOverload",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "WeightOverload",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "IsOversize",
-											"type": "Boolean"
-										},
-										"sink": {
-											"name": "IsOversize",
-											"type": "Boolean"
-										}
-									},
-									{
-										"source": {
-											"name": "VolumeOversize",
-											"type": "String"
-										},
-										"sink": {
-											"name": "VolumeOversize",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleLength",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "VehicleLength",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleWidth",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "VehicleWidth",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "VehicleHeight",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "VehicleHeight",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "EventTraffic",
-											"type": "String"
-										},
-										"sink": {
-											"name": "EventTraffic",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Hash",
-											"type": "String"
-										},
-										"sink": {
-											"name": "Hash",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "ExtraData",
-											"type": "String"
-										},
-										"sink": {
-											"name": "ExtraData",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "ID",
-											"type": "String"
-										},
-										"sink": {
-											"name": "ID",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "CreatedAt",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "CreatedAt",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "UpdatedAt",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "UpdatedAt",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "DeletedAt",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "DeletedAt",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "AfterImg",
-											"type": "String"
-										},
-										"sink": {
-											"name": "AfterImg",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "BeforeImg",
-											"type": "String"
-										},
-										"sink": {
-											"name": "BeforeImg",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "BigImg",
-											"type": "String"
-										},
-										"sink": {
-											"name": "BigImg",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "SmallImg",
-											"type": "String"
-										},
-										"sink": {
-											"name": "SmallImg",
-											"type": "String"
-										}
-									}
-								]
-							}
+						"folderPath": {
+							"value": "@dataset().folder",
+							"type": "Expression"
 						},
-						"inputs": [
-							{
-								"referenceName": "SourceDataset_tng",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DestinationDataset_tng",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/SourceDataset_tng')]",
-				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_tng')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/ETL with PySpark')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "ETL",
-						"type": "SynapseNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebook": {
-								"referenceName": "Notebook 1",
-								"type": "NotebookReference"
-							},
-							"snapshot": true,
-							"sparkPool": {
-								"referenceName": "OryzaSpark",
-								"type": "BigDataPoolReference"
-							},
-							"executorSize": "Small",
-							"conf": {
-								"spark.dynamicAllocation.enabled": null,
-								"spark.dynamicAllocation.minExecutors": null,
-								"spark.dynamicAllocation.maxExecutors": null
-							},
-							"driverSize": "Small",
-							"numExecutors": null
+						"container": {
+							"value": "@dataset().container",
+							"type": "Expression"
 						}
-					}
-				],
-				"concurrency": 1,
-				"policy": {
-					"elapsedTimeMetric": {}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
 				},
-				"annotations": []
+				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/notebooks/Notebook 1')]",
-				"[concat(variables('workspaceId'), '/bigDataPools/OryzaSpark')]"
+				"[concat(variables('workspaceId'), '/linkedServices/AzureBlobStorage1')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/Pipeline 1')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"name": "[concat(parameters('workspaceName'), '/DelimitedText2')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
-				"activities": [
-					{
-						"name": "Set variable1",
-						"type": "SetVariable",
-						"dependsOn": [],
-						"policy": {
-							"secureOutput": false,
-							"secureInput": false
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container": {
+						"type": "string"
+					},
+					"folder": {
+						"type": "string"
+					},
+					"file": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().file",
+							"type": "Expression"
 						},
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "name",
-							"value": "Demo"
+						"folderPath": {
+							"value": "@dataset().folder",
+							"type": "Expression"
+						},
+						"container": {
+							"value": "@dataset().container",
+							"type": "Expression"
 						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
 				},
-				"variables": {
-					"name": {
-						"type": "String"
-					}
-				},
-				"annotations": []
+				"schema": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureBlobStorage1')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_4pj')]",
@@ -2473,6 +1693,25 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/AzureBlobStorage1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/AzureDataLakeStorage')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -2513,6 +1752,25 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureSqlDatabase1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/AzureSynapse')]",
@@ -2584,16 +1842,8 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "CopyPipeline_sow",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
+				"runtimeState": "Stopped",
+				"pipelines": [],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
 					"blobPathBeginsWith": "/oryzafiledatalake/blobs/synapse/traffic-log",
@@ -2605,9 +1855,7 @@
 					]
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/pipelines/CopyPipeline_sow')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/Trigger Minute')]",
@@ -2616,15 +1864,7 @@
 			"properties": {
 				"annotations": [],
 				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "Pipeline 1",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
+				"pipelines": [],
 				"type": "ScheduleTrigger",
 				"typeProperties": {
 					"recurrence": {
@@ -2635,9 +1875,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/pipelines/Pipeline 1')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/Trigger Test')]",
@@ -2646,15 +1884,7 @@
 			"properties": {
 				"annotations": [],
 				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "CopyPipeline_g6h",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
+				"pipelines": [],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
 					"blobPathBeginsWith": "/sqldbledgerdigests/blobs/",
@@ -2666,9 +1896,7 @@
 					]
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/pipelines/CopyPipeline_g6h')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/Trigger new file')]",
@@ -2677,15 +1905,7 @@
 			"properties": {
 				"annotations": [],
 				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "CopyPipeline_g6h",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
+				"pipelines": [],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
 					"blobPathEndsWith": ".txt",
@@ -2697,8 +1917,39 @@
 					]
 				}
 			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Trigger_event_1')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Pipeline_linh",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"triggeer_filename": "[parameters('Trigger_event_1_properties_Pipeline_linh_parameters_triggeer_filename')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/source/blobs/data",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('Trigger_event_1_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/pipelines/CopyPipeline_g6h')]"
+				"[concat(variables('workspaceId'), '/pipelines/Pipeline_linh')]"
 			]
 		},
 		{

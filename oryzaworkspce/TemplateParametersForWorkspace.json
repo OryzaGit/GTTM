@@ -5,6 +5,12 @@
 		"workspaceName": {
 			"value": "oryzaworkspce"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"value": ""
+		},
 		"oryzaworkspce-WorkspaceDefaultSqlServer_connectionString": {
 			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:oryzaworkspce.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
 		},
@@ -32,6 +38,12 @@
 		},
 		"Trigger new file_properties_typeProperties_scope": {
 			"value": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzadatalake"
+		},
+		"Trigger_event_1_properties_Pipeline_linh_parameters_triggeer_filename": {
+			"value": "@trigger.Body().fileName"
+		},
+		"Trigger_event_1_properties_typeProperties_scope": {
+			"value": "/subscriptions/9a59d1c1-ada7-48aa-ad8b-848ae2288f40/resourceGroups/OryzaDev/providers/Microsoft.Storage/storageAccounts/oryzastorage"
 		}
 	}
 }
