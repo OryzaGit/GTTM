@@ -67,7 +67,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container": "sink",
-							"folder": "data_output",
+							"folder": "data_ouput",
 							"file": {
 								"value": "@pipeline().parameters.triggeer_filename",
 								"type": "Expression"
