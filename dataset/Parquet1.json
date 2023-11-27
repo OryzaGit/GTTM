@@ -1,0 +1,129 @@
+{
+	"name": "Parquet1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "synapse/traffic-log",
+				"fileSystem": "oryzafiledatalake"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "Time",
+				"type": "TIMESTAMP_MILLIS"
+			},
+			{
+				"name": "PlateNo",
+				"type": "UTF8"
+			},
+			{
+				"name": "PlateColor",
+				"type": "UTF8"
+			},
+			{
+				"name": "VehicleType",
+				"type": "UTF8"
+			},
+			{
+				"name": "VehicleColor",
+				"type": "UTF8"
+			},
+			{
+				"name": "VehicleModel",
+				"type": "UTF8"
+			},
+			{
+				"name": "Speed",
+				"type": "INT32"
+			},
+			{
+				"name": "Lane",
+				"type": "INT32"
+			},
+			{
+				"name": "IsWrongLane",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsOverload",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "WeightOverload",
+				"type": "INT32"
+			},
+			{
+				"name": "IsOversize",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "VolumeOversize",
+				"type": "UTF8"
+			},
+			{
+				"name": "VehicleLength",
+				"type": "INT32"
+			},
+			{
+				"name": "VehicleWidth",
+				"type": "INT32"
+			},
+			{
+				"name": "VehicleHeight",
+				"type": "INT32"
+			},
+			{
+				"name": "EventTraffic",
+				"type": "UTF8"
+			},
+			{
+				"name": "Hash",
+				"type": "UTF8"
+			},
+			{
+				"name": "ExtraData",
+				"type": "UTF8"
+			},
+			{
+				"name": "ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "CreatedAt",
+				"type": "TIMESTAMP_MILLIS"
+			},
+			{
+				"name": "UpdatedAt",
+				"type": "TIMESTAMP_MILLIS"
+			},
+			{
+				"name": "DeletedAt",
+				"type": "TIMESTAMP_MILLIS"
+			},
+			{
+				"name": "AfterImg",
+				"type": "UTF8"
+			},
+			{
+				"name": "BeforeImg",
+				"type": "UTF8"
+			},
+			{
+				"name": "BigImg",
+				"type": "UTF8"
+			},
+			{
+				"name": "SmallImg",
+				"type": "UTF8"
+			}
+		]
+	}
+}
