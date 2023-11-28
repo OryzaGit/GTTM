@@ -1,0 +1,21 @@
+{
+	"name": "SourceDataset_412",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "violation_2023_11_23.parquet",
+				"folderPath": "synapse/traffic-violation",
+				"fileSystem": "oryzafiledatalake"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
