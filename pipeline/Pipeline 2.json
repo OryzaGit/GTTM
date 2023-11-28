@@ -24,6 +24,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -87,7 +88,10 @@
 							"typeProperties": {
 								"source": {
 									"type": "SqlPoolSource",
-									"sqlReaderQuery": "select Name,Type from LogsFile\nwhere Name = '@{item().name}' and Type ='violation'",
+									"sqlReaderQuery": {
+										"value": "select Name,Type from LogsFile\nwhere Name = '@{item().name}' and Type ='violation'",
+										"type": "Expression"
+									},
 									"queryTimeout": "02:00:00"
 								},
 								"dataset": {
@@ -126,7 +130,7 @@
 								],
 								"ifTrueActivities": [
 									{
-										"name": "Copy_412",
+										"name": "Copy_ash",
 										"type": "Copy",
 										"dependsOn": [],
 										"policy": {
@@ -174,16 +178,69 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "SourceDataset_412",
+												"referenceName": "SourceDataset_ash",
 												"type": "DatasetReference"
 											}
 										],
 										"outputs": [
 											{
-												"referenceName": "DestinationDataset_412",
+												"referenceName": "DestinationDataset_ash",
 												"type": "DatasetReference"
 											}
 										]
+									},
+									{
+										"name": "Script1",
+										"type": "Script",
+										"dependsOn": [
+											{
+												"activity": "Copy_ash",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"linkedServiceName": {
+											"referenceName": "oryzaworkspce-WorkspaceDefaultSqlServer",
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"DBName": "OryzaPoolDemo"
+											}
+										},
+										"typeProperties": {
+											"scripts": [
+												{
+													"parameters": [
+														{
+															"name": "name",
+															"type": "String",
+															"value": {
+																"value": "@item().name",
+																"type": "Expression"
+															},
+															"direction": "Input"
+														},
+														{
+															"name": "type",
+															"type": "String",
+															"value": "violation",
+															"direction": "Input"
+														}
+													],
+													"type": "Query",
+													"text": "INSERT INTO LogsFile(Name,Type)\nVALUES(@name,@type)"
+												}
+											],
+											"scriptBlockExecutionTimeout": "02:00:00"
+										}
 									}
 								]
 							}
