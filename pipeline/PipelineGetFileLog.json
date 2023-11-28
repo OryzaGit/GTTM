@@ -24,6 +24,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -129,7 +130,7 @@
 								],
 								"ifTrueActivities": [
 									{
-										"name": "Copy_2tg",
+										"name": "Copy_dmq",
 										"type": "Copy",
 										"dependsOn": [],
 										"policy": {
@@ -156,7 +157,10 @@
 													"type": "AzureBlobFSReadSettings",
 													"recursive": true,
 													"wildcardFolderPath": "synapse/traffic-log",
-													"wildcardFileName": "item().name",
+													"wildcardFileName": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
 													"enablePartitionDiscovery": false
 												},
 												"formatSettings": {
@@ -167,20 +171,79 @@
 												"type": "SqlPoolSink",
 												"allowCopyCommand": true
 											},
-											"enableStaging": false
+											"enableStaging": true,
+											"stagingSettings": {
+												"linkedServiceName": {
+													"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+													"type": "LinkedServiceReference"
+												}
+											}
 										},
 										"inputs": [
 											{
-												"referenceName": "SourceDataset_2tg",
+												"referenceName": "SourceDataset_dmq",
 												"type": "DatasetReference"
 											}
 										],
 										"outputs": [
 											{
-												"referenceName": "DestinationDataset_2tg",
+												"referenceName": "DestinationDataset_dmq",
 												"type": "DatasetReference"
 											}
 										]
+									},
+									{
+										"name": "Script1",
+										"type": "Script",
+										"dependsOn": [
+											{
+												"activity": "Copy_dmq",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"linkedServiceName": {
+											"referenceName": "oryzaworkspce-WorkspaceDefaultSqlServer",
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"DBName": "OryzaPoolDemo"
+											}
+										},
+										"typeProperties": {
+											"scripts": [
+												{
+													"parameters": [
+														{
+															"name": "name",
+															"type": "String",
+															"value": {
+																"value": "@item().name",
+																"type": "Expression"
+															},
+															"direction": "Input"
+														},
+														{
+															"name": "type",
+															"type": "String",
+															"value": "log",
+															"direction": "Input"
+														}
+													],
+													"type": "Query",
+													"text": "INSERT INTO LogsFile(Name,Type)\nVALUES(@name,@type)"
+												}
+											],
+											"scriptBlockExecutionTimeout": "02:00:00"
+										}
 									}
 								]
 							}
