@@ -1,0 +1,101 @@
+{
+	"name": "Parquet2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "synapse/traffic-violation",
+				"fileSystem": "oryzafiledatalake"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "LogId",
+				"type": "UTF8"
+			},
+			{
+				"name": "ViolationPatternId",
+				"type": "UTF8"
+			},
+			{
+				"name": "StatusId",
+				"type": "UTF8"
+			},
+			{
+				"name": "DocumentNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "OperationTeam",
+				"type": "UTF8"
+			},
+			{
+				"name": "Dear",
+				"type": "UTF8"
+			},
+			{
+				"name": "VehicleOwner",
+				"type": "UTF8"
+			},
+			{
+				"name": "DOB",
+				"type": "TIMESTAMP_MILLIS"
+			},
+			{
+				"name": "Address",
+				"type": "UTF8"
+			},
+			{
+				"name": "LocationViolation",
+				"type": "UTF8"
+			},
+			{
+				"name": "Description",
+				"type": "UTF8"
+			},
+			{
+				"name": "Coordinate",
+				"type": "UTF8"
+			},
+			{
+				"name": "SettlementAgency",
+				"type": "UTF8"
+			},
+			{
+				"name": "DateTranfer",
+				"type": "TIMESTAMP_MILLIS"
+			},
+			{
+				"name": "DateSolving",
+				"type": "TIMESTAMP_MILLIS"
+			},
+			{
+				"name": "ExtraData",
+				"type": "UTF8"
+			},
+			{
+				"name": "ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "CreatedAt",
+				"type": "TIMESTAMP_MILLIS"
+			},
+			{
+				"name": "UpdatedAt",
+				"type": "TIMESTAMP_MILLIS"
+			},
+			{
+				"name": "DeletedAt",
+				"type": "TIMESTAMP_MILLIS"
+			}
+		]
+	}
+}
