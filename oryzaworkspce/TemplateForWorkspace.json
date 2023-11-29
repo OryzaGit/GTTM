@@ -73,13 +73,13 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/CopyLog2')]",
+			"name": "[concat(parameters('workspaceName'), '/CopyLog')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy_2tg",
+						"name": "Copy_dmq",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -116,18 +116,24 @@
 								"allowCopyCommand": true,
 								"copyCommandSettings": {}
 							},
-							"enableStaging": false
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+									"type": "LinkedServiceReference"
+								}
+							}
 						},
 						"inputs": [
 							{
-								"referenceName": "SourceDataset_2tg",
+								"referenceName": "SourceDataset_dmq",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "DestinationDataset_2tg",
+								"referenceName": "DestinationDataset_dmq",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -140,8 +146,720 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/SourceDataset_2tg')]",
-				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_2tg')]"
+				"[concat(variables('workspaceId'), '/datasets/SourceDataset_dmq')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_dmq')]",
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CopyPipelineViolation2')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CopyPipeline_ash')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy_ash",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "oryzafiledatalake/synapse/traffic-violation/violation_2023_11_23.parquet"
+							},
+							{
+								"name": "Destination",
+								"value": "dbo.TrafficViolation"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "ParquetReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlPoolSink",
+								"allowCopyCommand": true,
+								"copyCommandSettings": {}
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+									"type": "LinkedServiceReference"
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_ash",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_ash",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/SourceDataset_ash')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_ash')]",
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PipeLineViolation')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata2",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Parquet2",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "ParquetReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Filter1",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata2').output.childItems",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@endswith(item().name,'.parquet')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Filter1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter1').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Lookup1",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlPoolSource",
+											"sqlReaderQuery": {
+												"value": "select Name,Type from LogsFile\nwhere Name = '@{item().name}' and Type ='violation'",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00"
+										},
+										"dataset": {
+											"referenceName": "SqlPoolTable1",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									}
+								},
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "Lookup1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(activity('Lookup1').output?.firstRow,null)",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "Wait2",
+												"type": "Wait",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"waitTimeInSeconds": 1
+												}
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "Script1",
+												"type": "Script",
+												"dependsOn": [
+													{
+														"activity": "Copy_412",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"linkedServiceName": {
+													"referenceName": "oryzaworkspce-WorkspaceDefaultSqlServer",
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"DBName": "OryzaPoolDemo"
+													}
+												},
+												"typeProperties": {
+													"scripts": [
+														{
+															"parameters": [
+																{
+																	"name": "name",
+																	"type": "String",
+																	"value": {
+																		"value": "@item().name",
+																		"type": "Expression"
+																	},
+																	"direction": "Input"
+																},
+																{
+																	"name": "type",
+																	"type": "String",
+																	"value": "violation",
+																	"direction": "Input"
+																}
+															],
+															"type": "Query",
+															"text": "INSERT INTO LogsFile(Name,Type)\nVALUES(@name,@type)"
+														}
+													],
+													"scriptBlockExecutionTimeout": "02:00:00"
+												}
+											},
+											{
+												"name": "Copy_412",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [
+													{
+														"name": "Source",
+														"value": "oryzafiledatalake/synapse/traffic-violation/violation_2023_11_23.parquet"
+													},
+													{
+														"name": "Destination",
+														"value": "dbo.TrafficViolation"
+													}
+												],
+												"typeProperties": {
+													"source": {
+														"type": "ParquetSource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true,
+															"wildcardFolderPath": "synapse/traffic-violation",
+															"wildcardFileName": {
+																"value": "@item().name",
+																"type": "Expression"
+															},
+															"enablePartitionDiscovery": false
+														},
+														"formatSettings": {
+															"type": "ParquetReadSettings"
+														}
+													},
+													"sink": {
+														"type": "SqlPoolSink",
+														"allowCopyCommand": true,
+														"copyCommandSettings": {}
+													},
+													"enableStaging": true,
+													"stagingSettings": {
+														"linkedServiceName": {
+															"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+															"type": "LinkedServiceReference"
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "SourceDataset_412",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "DestinationDataset_412",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Parquet2')]",
+				"[concat(variables('workspaceId'), '/datasets/SqlPoolTable1')]",
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultSqlServer')]",
+				"[concat(variables('workspaceId'), '/datasets/SourceDataset_412')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_412')]",
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Pipeline 1')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "oryzaworkspce-WorkspaceDefaultSqlServer",
+							"type": "LinkedServiceReference",
+							"parameters": {
+								"DBName": "OryzaPoolDemo"
+							}
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"parameters": [
+										{
+											"name": "name",
+											"type": "String",
+											"value": "demo2",
+											"direction": "Input"
+										},
+										{
+											"name": "type",
+											"type": "String",
+											"value": "log",
+											"direction": "Input"
+										}
+									],
+									"type": "Query",
+									"text": "INSERT INTO LogsFile(Name,Type)\nVALUES(@name,@type)"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultSqlServer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Pipeline 2')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata2",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Parquet2",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "ParquetReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Filter1",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata2').output.childItems",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@endswith(item().name,'.parquet')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Filter1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter1').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Lookup1",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlPoolSource",
+											"sqlReaderQuery": {
+												"value": "select Name,Type from LogsFile\nwhere Name = '@{item().name}' and Type ='violation'",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00"
+										},
+										"dataset": {
+											"referenceName": "SqlPoolTable1",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									}
+								},
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "Lookup1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(activity('Lookup1').output?.firstRow,null)",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "Wait1",
+												"type": "Wait",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"waitTimeInSeconds": 1
+												}
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "Copy_ash",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [
+													{
+														"name": "Source",
+														"value": "oryzafiledatalake/synapse/traffic-violation/violation_2023_11_23.parquet"
+													},
+													{
+														"name": "Destination",
+														"value": "dbo.TrafficViolation"
+													}
+												],
+												"typeProperties": {
+													"source": {
+														"type": "ParquetSource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true,
+															"wildcardFolderPath": "synapse/traffic-violation",
+															"wildcardFileName": {
+																"value": "@item().name",
+																"type": "Expression"
+															},
+															"enablePartitionDiscovery": false
+														},
+														"formatSettings": {
+															"type": "ParquetReadSettings"
+														}
+													},
+													"sink": {
+														"type": "SqlPoolSink",
+														"allowCopyCommand": true,
+														"copyCommandSettings": {}
+													},
+													"enableStaging": true,
+													"stagingSettings": {
+														"linkedServiceName": {
+															"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+															"type": "LinkedServiceReference"
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "SourceDataset_ash",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "DestinationDataset_ash",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												]
+											},
+											{
+												"name": "Script1",
+												"type": "Script",
+												"dependsOn": [
+													{
+														"activity": "Copy_ash",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"linkedServiceName": {
+													"referenceName": "oryzaworkspce-WorkspaceDefaultSqlServer",
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"DBName": "OryzaPoolDemo"
+													}
+												},
+												"typeProperties": {
+													"scripts": [
+														{
+															"parameters": [
+																{
+																	"name": "name",
+																	"type": "String",
+																	"value": {
+																		"value": "@item().name",
+																		"type": "Expression"
+																	},
+																	"direction": "Input"
+																},
+																{
+																	"name": "type",
+																	"type": "String",
+																	"value": "violation",
+																	"direction": "Input"
+																}
+															],
+															"type": "Query",
+															"text": "INSERT INTO LogsFile(Name,Type)\nVALUES(@name,@type)"
+														}
+													],
+													"scriptBlockExecutionTimeout": "02:00:00"
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Parquet2')]",
+				"[concat(variables('workspaceId'), '/datasets/SqlPoolTable1')]",
+				"[concat(variables('workspaceId'), '/datasets/SourceDataset_ash')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_ash')]",
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultSqlServer')]",
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -280,7 +998,7 @@
 										],
 										"ifTrueActivities": [
 											{
-												"name": "Copy_2tg",
+												"name": "Copy_dmq",
 												"type": "Copy",
 												"dependsOn": [],
 												"policy": {
@@ -307,7 +1025,10 @@
 															"type": "AzureBlobFSReadSettings",
 															"recursive": true,
 															"wildcardFolderPath": "synapse/traffic-log",
-															"wildcardFileName": "item().name",
+															"wildcardFileName": {
+																"value": "@item().name",
+																"type": "Expression"
+															},
 															"enablePartitionDiscovery": false
 														},
 														"formatSettings": {
@@ -319,22 +1040,81 @@
 														"allowCopyCommand": true,
 														"copyCommandSettings": {}
 													},
-													"enableStaging": false
+													"enableStaging": true,
+													"stagingSettings": {
+														"linkedServiceName": {
+															"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+															"type": "LinkedServiceReference"
+														}
+													}
 												},
 												"inputs": [
 													{
-														"referenceName": "SourceDataset_2tg",
+														"referenceName": "SourceDataset_dmq",
 														"type": "DatasetReference",
 														"parameters": {}
 													}
 												],
 												"outputs": [
 													{
-														"referenceName": "DestinationDataset_2tg",
+														"referenceName": "DestinationDataset_dmq",
 														"type": "DatasetReference",
 														"parameters": {}
 													}
 												]
+											},
+											{
+												"name": "Script1",
+												"type": "Script",
+												"dependsOn": [
+													{
+														"activity": "Copy_dmq",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"linkedServiceName": {
+													"referenceName": "oryzaworkspce-WorkspaceDefaultSqlServer",
+													"type": "LinkedServiceReference",
+													"parameters": {
+														"DBName": "OryzaPoolDemo"
+													}
+												},
+												"typeProperties": {
+													"scripts": [
+														{
+															"parameters": [
+																{
+																	"name": "name",
+																	"type": "String",
+																	"value": {
+																		"value": "@item().name",
+																		"type": "Expression"
+																	},
+																	"direction": "Input"
+																},
+																{
+																	"name": "type",
+																	"type": "String",
+																	"value": "log",
+																	"direction": "Input"
+																}
+															],
+															"type": "Query",
+															"text": "INSERT INTO LogsFile(Name,Type)\nVALUES(@name,@type)"
+														}
+													],
+													"scriptBlockExecutionTimeout": "02:00:00"
+												}
 											}
 										]
 									}
@@ -356,8 +1136,10 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/Parquet1')]",
 				"[concat(variables('workspaceId'), '/datasets/SqlPoolTable1')]",
-				"[concat(variables('workspaceId'), '/datasets/SourceDataset_2tg')]",
-				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_2tg')]"
+				"[concat(variables('workspaceId'), '/datasets/SourceDataset_dmq')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_dmq')]",
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultSqlServer')]",
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -564,6 +1346,27 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "TrafficLog"
+				},
+				"sqlPool": {
+					"referenceName": "OryzaPoolDemo",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/OryzaPoolDemo')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_412')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TrafficViolation"
 				},
 				"sqlPool": {
 					"referenceName": "OryzaPoolDemo",
@@ -865,6 +1668,27 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_6rq')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TrafficViolation"
+				},
+				"sqlPool": {
+					"referenceName": "OryzaPoolDemo",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/OryzaPoolDemo')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_897')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -995,6 +1819,48 @@
 						"type": "varchar"
 					}
 				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TrafficLog"
+				},
+				"sqlPool": {
+					"referenceName": "OryzaPoolDemo",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/OryzaPoolDemo')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_ash')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TrafficViolation"
+				},
+				"sqlPool": {
+					"referenceName": "OryzaPoolDemo",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/OryzaPoolDemo')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_dmq')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [],
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "TrafficLog"
@@ -1521,6 +2387,218 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Parquet2')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "synapse/traffic-violation",
+						"fileSystem": "oryzafiledatalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "LogId",
+						"type": "UTF8"
+					},
+					{
+						"name": "ViolationPatternId",
+						"type": "UTF8"
+					},
+					{
+						"name": "StatusId",
+						"type": "UTF8"
+					},
+					{
+						"name": "DocumentNumber",
+						"type": "UTF8"
+					},
+					{
+						"name": "OperationTeam",
+						"type": "UTF8"
+					},
+					{
+						"name": "Dear",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleOwner",
+						"type": "UTF8"
+					},
+					{
+						"name": "DOB",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "Address",
+						"type": "UTF8"
+					},
+					{
+						"name": "LocationViolation",
+						"type": "UTF8"
+					},
+					{
+						"name": "Description",
+						"type": "UTF8"
+					},
+					{
+						"name": "Coordinate",
+						"type": "UTF8"
+					},
+					{
+						"name": "SettlementAgency",
+						"type": "UTF8"
+					},
+					{
+						"name": "DateTranfer",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "DateSolving",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "ExtraData",
+						"type": "UTF8"
+					},
+					{
+						"name": "ID",
+						"type": "UTF8"
+					},
+					{
+						"name": "CreatedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "UpdatedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "DeletedAt",
+						"type": "TIMESTAMP_MILLIS"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Parquet3')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "synapse/traffic-violation",
+						"fileSystem": "oryzafiledatalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "LogId",
+						"type": "UTF8"
+					},
+					{
+						"name": "ViolationPatternId",
+						"type": "UTF8"
+					},
+					{
+						"name": "StatusId",
+						"type": "UTF8"
+					},
+					{
+						"name": "DocumentNumber",
+						"type": "UTF8"
+					},
+					{
+						"name": "OperationTeam",
+						"type": "UTF8"
+					},
+					{
+						"name": "Dear",
+						"type": "UTF8"
+					},
+					{
+						"name": "VehicleOwner",
+						"type": "UTF8"
+					},
+					{
+						"name": "DOB",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "Address",
+						"type": "UTF8"
+					},
+					{
+						"name": "LocationViolation",
+						"type": "UTF8"
+					},
+					{
+						"name": "Description",
+						"type": "UTF8"
+					},
+					{
+						"name": "Coordinate",
+						"type": "UTF8"
+					},
+					{
+						"name": "SettlementAgency",
+						"type": "UTF8"
+					},
+					{
+						"name": "DateTranfer",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "DateSolving",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "ExtraData",
+						"type": "UTF8"
+					},
+					{
+						"name": "ID",
+						"type": "UTF8"
+					},
+					{
+						"name": "CreatedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "UpdatedAt",
+						"type": "TIMESTAMP_MILLIS"
+					},
+					{
+						"name": "DeletedAt",
+						"type": "TIMESTAMP_MILLIS"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SourceDataset_2tg')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -1536,6 +2614,32 @@
 						"type": "AzureBlobFSLocation",
 						"fileName": "log_2023_11_25.parquet",
 						"folderPath": "synapse/traffic-log",
+						"fileSystem": "oryzafiledatalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SourceDataset_412')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "violation_2023_11_23.parquet",
+						"folderPath": "synapse/traffic-violation",
 						"fileSystem": "oryzafiledatalake"
 					},
 					"compressionCodec": "snappy"
@@ -1829,6 +2933,32 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SourceDataset_6rq')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "violation_2023_11_23.parquet",
+						"folderPath": "synapse/traffic-violation",
+						"fileSystem": "oryzafiledatalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SourceDataset_897')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -1958,6 +3088,58 @@
 						"type": "UTF8"
 					}
 				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SourceDataset_ash')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "violation_2023_11_23.parquet",
+						"folderPath": "synapse/traffic-violation",
+						"fileSystem": "oryzafiledatalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SourceDataset_dmq')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "log_2023_11_25.parquet",
+						"folderPath": "synapse/traffic-log",
+						"fileSystem": "oryzafiledatalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/oryzaworkspce-WorkspaceDefaultStorage')]"
@@ -2892,12 +4074,32 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 3')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP (100) [ID]\n,[Name]\n,[Type]\n,[CreatedAt]\n,[UpdatedAt]\n FROM [dbo].[LogsFile]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "OryzaPoolDemo",
+						"poolName": "OryzaPoolDemo"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/queryinit')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "DROP TABLE TrafficViolation;\nCREATE TABLE TrafficViolation (\n    LogId varchar(50),\n    ViolationPatternId varchar(255),\n    StatusId varchar(255),\n    DocumentNumber varchar(255),\n    OperationTeam varchar(100),\n    Dear varchar(100),\n    VehicleOwner varchar(100), \n    DOB datetime,\n    Address varchar(255),\n    LocationViolation varchar(255),\n    Description varchar(1000),\n    Coordinate varchar(255),\n    SettlementAgency varchar(100),\n    DateTranfer date,\n    DateSolving date,\n    ExtraData varchar(4000),\n    ID varchar(50),\n    CreatedAt date,\n    UpdatedAt date, \n    DeletedAt date\n)\nDROP TABLE TrafficLog;\nCREATE TABLE TrafficLog (\n    Time date, \n    PlateNo varchar(50),\n    PlateColor varchar(255),\n    VehicleType varchar(255),\n    VehicleColor varchar(255),\n    VehicleModel varchar(255),\n    Speed int,\n    Lane int,\n    IsWrongLane bit,\n    IsOverload bit, \n    WeightOverload int,\n    IsOversize bit,\n    VolumeOversize varchar(100),\n    VehicleLength int,\n    VehicleWidth int, \n    VehicleHeight int,\n    EventTraffic varchar(255),\n    Hash varchar(255),\n    ExtraData NVARCHAR(4000),\n    ID varchar(50),\n    CreatedAt date,\n    UpdatedAt date, \n    DeletedAt date,\n    AfterImg varchar(500),\n    BeforeImg varchar(500), \n    BigImg varchar(500),\n    SmallImg varchar(500)\n)",
+					"query": "DROP TABLE TrafficViolation;\nCREATE TABLE TrafficViolation (\n    LogId varchar(50),\n    ViolationPatternId varchar(255),\n    StatusId varchar(255),\n    DocumentNumber varchar(255),\n    OperationTeam varchar(100),\n    Dear varchar(100),\n    VehicleOwner varchar(100), \n    DOB datetime,\n    Address varchar(255),\n    LocationViolation varchar(255),\n    Description varchar(1000),\n    Coordinate varchar(255),\n    SettlementAgency varchar(100),\n    DateTranfer date,\n    DateSolving date,\n    ExtraData varchar(4000),\n    ID varchar(50),\n    CreatedAt date,\n    UpdatedAt date, \n    DeletedAt date\n)\nDROP TABLE TrafficLog;\nCREATE TABLE TrafficLog (\n    Time date, \n    PlateNo varchar(50),\n    PlateColor varchar(255),\n    VehicleType varchar(255),\n    VehicleColor varchar(255),\n    VehicleModel varchar(255),\n    Speed int,\n    Lane int,\n    IsWrongLane bit,\n    IsOverload bit, \n    WeightOverload int,\n    IsOversize bit,\n    VolumeOversize varchar(100),\n    VehicleLength int,\n    VehicleWidth int, \n    VehicleHeight int,\n    EventTraffic varchar(255),\n    Hash varchar(255),\n    ExtraData NVARCHAR(4000),\n    ID varchar(50),\n    CreatedAt date,\n    UpdatedAt date, \n    DeletedAt date,\n    AfterImg varchar(500),\n    BeforeImg varchar(500), \n    BigImg varchar(500),\n    SmallImg varchar(500)\n)\nTRUNCATE TABLE TrafficLog;",
 					"metadata": {
 						"language": "sql"
 					},
