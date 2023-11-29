@@ -1,0 +1,24 @@
+{
+	"name": "Trigger 5 minite",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "CopyPipeline_ash",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 5,
+				"startTime": "2023-11-29T02:35:00",
+				"timeZone": "SE Asia Standard Time"
+			}
+		}
+	}
+}
