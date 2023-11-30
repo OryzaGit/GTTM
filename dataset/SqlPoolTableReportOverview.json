@@ -1,0 +1,47 @@
+{
+	"name": "SqlPoolTableReportOverview",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "TotalAllVehicleByDay",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TotalViolationVehicleByDay",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TotalMissDataImageByDay",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TotalMissDataSpeedByDay",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ID",
+				"type": "varchar"
+			},
+			{
+				"name": "CreatedAt",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "ReportOverview"
+		},
+		"sqlPool": {
+			"referenceName": "OryzaPoolDemo",
+			"type": "SqlPoolReference"
+		}
+	}
+}

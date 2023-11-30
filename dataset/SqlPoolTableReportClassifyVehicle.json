@@ -1,0 +1,38 @@
+{
+	"name": "SqlPoolTableReportClassifyVehicle",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "Type",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Total",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ID",
+				"type": "varchar"
+			},
+			{
+				"name": "CreatedAt",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "ReportClassifyVehicle"
+		},
+		"sqlPool": {
+			"referenceName": "OryzaPoolDemo",
+			"type": "SqlPoolReference"
+		}
+	}
+}

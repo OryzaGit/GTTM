@@ -1,0 +1,17 @@
+{
+	"name": "queryinit_report",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE ReportOverview (\n    TotalAllVehicleByDay BIGINT,\n    TotalViolationVehicleByDay BIGINT,\n    TotalMissDataImageByDay BIGINT,\n    TotalMissDataSpeedByDay BIGINT,\n    ID varchar(50),\n    CreatedAt DATETIME\n);\n\n-- Create table based on schemaReportVehicleFluctuations\nCREATE TABLE ReportVehicleFluctuations (\n    Type NVARCHAR(255),\n    ZeroHour BIGINT,\n    OneHour BIGINT,\n    TwoHour BIGINT,\n    ThreeHour BIGINT,\n    FourHour BIGINT,\n    FiveHour BIGINT,\n    SixHour BIGINT,\n    SevenHour BIGINT,\n    EightHour BIGINT,\n    NineHour BIGINT,\n    TenHour BIGINT,\n    ElevenHour BIGINT,\n    TwelveHour BIGINT,\n    ThirteenHour BIGINT,\n    FourteenHour BIGINT,\n    FifteenHour BIGINT,\n    SixteenHour BIGINT,\n    SeventeenHour BIGINT,\n    EighteenHour BIGINT,\n    NineteenHour BIGINT,\n    TwentyHour BIGINT,\n    TwentyOneHour BIGINT,\n    TwentyTwoHour BIGINT,\n    TwentyThreeHour BIGINT,\n    ID varchar(50),\n    CreatedAt date\n);\n\n-- Create table based on schemaReportClassifyVehicle\nCREATE TABLE ReportClassifyVehicle (\n    Type NVARCHAR(255),\n    Name NVARCHAR(255),\n    Total BIGINT,\n    ID varchar(50),\n    CreatedAt date\n);",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "OryzaPoolDemo",
+				"poolName": "OryzaPoolDemo"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
