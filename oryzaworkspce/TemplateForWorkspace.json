@@ -1000,7 +1000,14 @@
 											{
 												"name": "Copy_dmq",
 												"type": "Copy",
-												"dependsOn": [],
+												"dependsOn": [
+													{
+														"activity": "Script1",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
 												"policy": {
 													"timeout": "0.12:00:00",
 													"retry": 0,
@@ -1066,14 +1073,7 @@
 											{
 												"name": "Script1",
 												"type": "Script",
-												"dependsOn": [
-													{
-														"activity": "Copy_dmq",
-														"dependencyConditions": [
-															"Succeeded"
-														]
-													}
-												],
+												"dependsOn": [],
 												"policy": {
 													"timeout": "0.12:00:00",
 													"retry": 0,
