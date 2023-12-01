@@ -9,6 +9,12 @@
 					"referenceName": "CopyPipeline_ash",
 					"type": "PipelineReference"
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "PipeLineViolation",
+					"type": "PipelineReference"
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
