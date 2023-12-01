@@ -9,6 +9,12 @@
 					"referenceName": "PipeLineViolation",
 					"type": "PipelineReference"
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "PipelineGetFileLog",
+					"type": "PipelineReference"
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
