@@ -1,9 +1,9 @@
 {
-	"name": "CopyLog2",
+	"name": "CopyLog",
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_2tg",
+				"name": "Copy_dmq",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -39,17 +39,23 @@
 						"type": "SqlPoolSink",
 						"allowCopyCommand": true
 					},
-					"enableStaging": false
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						}
+					}
 				},
 				"inputs": [
 					{
-						"referenceName": "SourceDataset_2tg",
+						"referenceName": "SourceDataset_dmq",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DestinationDataset_2tg",
+						"referenceName": "DestinationDataset_dmq",
 						"type": "DatasetReference"
 					}
 				]

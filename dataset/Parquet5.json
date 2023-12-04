@@ -1,0 +1,41 @@
+{
+	"name": "Parquet5",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "synapse/report",
+				"fileSystem": "oryzafiledatalake"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "Type",
+				"type": "UTF8"
+			},
+			{
+				"name": "Name",
+				"type": "UTF8"
+			},
+			{
+				"name": "Total",
+				"type": "INT64"
+			},
+			{
+				"name": "ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "CreatedAt",
+				"type": "TIMESTAMP_MILLIS"
+			}
+		]
+	}
+}

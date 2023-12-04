@@ -1,0 +1,21 @@
+{
+	"name": "SourceDataset_dmq",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "log_2023_11_25.parquet",
+				"folderPath": "synapse/traffic-log",
+				"fileSystem": "oryzafiledatalake"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}

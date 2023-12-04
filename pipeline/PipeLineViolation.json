@@ -1,9 +1,9 @@
 {
-	"name": "PipelineGetFileLog",
+	"name": "PipeLineViolation",
 	"properties": {
 		"activities": [
 			{
-				"name": "Get Metadata1",
+				"name": "Get Metadata2",
 				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "Parquet1",
+						"referenceName": "Parquet2",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
@@ -24,7 +24,6 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
-						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -37,7 +36,7 @@
 				"type": "Filter",
 				"dependsOn": [
 					{
-						"activity": "Get Metadata1",
+						"activity": "Get Metadata2",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -46,7 +45,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Get Metadata1').output.childItems",
+						"value": "@activity('Get Metadata2').output.childItems",
 						"type": "Expression"
 					},
 					"condition": {
@@ -89,7 +88,7 @@
 								"source": {
 									"type": "SqlPoolSource",
 									"sqlReaderQuery": {
-										"value": "select Name,Type from LogsFile\nwhere Name = '@{item().name}'",
+										"value": "select Name,Type from LogsFile\nwhere Name = '@{item().name}' and Type ='violation'",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00"
@@ -130,79 +129,16 @@
 								],
 								"ifTrueActivities": [
 									{
-										"name": "Copy_dmq",
-										"type": "Copy",
+										"name": "Script1",
+										"type": "Script",
 										"dependsOn": [
 											{
-												"activity": "Script1",
+												"activity": "Copy_412",
 												"dependencyConditions": [
 													"Succeeded"
 												]
 											}
 										],
-										"policy": {
-											"timeout": "0.12:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [
-											{
-												"name": "Source",
-												"value": "oryzafiledatalake/synapse/traffic-log/log_2023_11_25.parquet"
-											},
-											{
-												"name": "Destination",
-												"value": "dbo.TrafficLog"
-											}
-										],
-										"typeProperties": {
-											"source": {
-												"type": "ParquetSource",
-												"storeSettings": {
-													"type": "AzureBlobFSReadSettings",
-													"recursive": true,
-													"wildcardFolderPath": "synapse/traffic-log",
-													"wildcardFileName": {
-														"value": "@item().name",
-														"type": "Expression"
-													},
-													"enablePartitionDiscovery": false
-												},
-												"formatSettings": {
-													"type": "ParquetReadSettings"
-												}
-											},
-											"sink": {
-												"type": "SqlPoolSink",
-												"allowCopyCommand": true
-											},
-											"enableStaging": true,
-											"stagingSettings": {
-												"linkedServiceName": {
-													"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
-													"type": "LinkedServiceReference"
-												}
-											}
-										},
-										"inputs": [
-											{
-												"referenceName": "SourceDataset_dmq",
-												"type": "DatasetReference"
-											}
-										],
-										"outputs": [
-											{
-												"referenceName": "DestinationDataset_dmq",
-												"type": "DatasetReference"
-											}
-										]
-									},
-									{
-										"name": "Script1",
-										"type": "Script",
-										"dependsOn": [],
 										"policy": {
 											"timeout": "0.12:00:00",
 											"retry": 0,
@@ -234,7 +170,7 @@
 														{
 															"name": "type",
 															"type": "String",
-															"value": "log",
+															"value": "violation",
 															"direction": "Input"
 														}
 													],
@@ -244,6 +180,66 @@
 											],
 											"scriptBlockExecutionTimeout": "02:00:00"
 										}
+									},
+									{
+										"name": "Copy_412",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [
+											{
+												"name": "Source",
+												"value": "oryzafiledatalake/synapse/traffic-violation/violation_2023_11_23.parquet"
+											},
+											{
+												"name": "Destination",
+												"value": "dbo.TrafficViolation"
+											}
+										],
+										"typeProperties": {
+											"source": {
+												"type": "ParquetSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true,
+													"wildcardFolderPath": "synapse/traffic-violation",
+													"wildcardFileName": "@item().name",
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "ParquetReadSettings"
+												}
+											},
+											"sink": {
+												"type": "SqlPoolSink",
+												"allowCopyCommand": true
+											},
+											"enableStaging": true,
+											"stagingSettings": {
+												"linkedServiceName": {
+													"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+													"type": "LinkedServiceReference"
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "SourceDataset_412",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "DestinationDataset_412",
+												"type": "DatasetReference"
+											}
+										]
 									}
 								]
 							}
@@ -252,11 +248,6 @@
 				}
 			}
 		],
-		"variables": {
-			"isSucess": {
-				"type": "Boolean"
-			}
-		},
 		"annotations": []
 	}
 }

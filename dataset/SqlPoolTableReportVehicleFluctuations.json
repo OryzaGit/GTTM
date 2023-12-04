@@ -1,0 +1,149 @@
+{
+	"name": "SqlPoolTableReportVehicleFluctuations",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "Type",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZeroHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "OneHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TwoHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ThreeHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FourHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FiveHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SixHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SevenHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "EightHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "NineHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TenHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ElevenHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TwelveHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ThirteenHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FourteenHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FifteenHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SixteenHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SeventeenHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "EighteenHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "NineteenHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TwentyHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TwentyOneHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TwentyTwoHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TwentyThreeHour",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ID",
+				"type": "varchar"
+			},
+			{
+				"name": "CreatedAt",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "ReportVehicleFluctuations"
+		},
+		"sqlPool": {
+			"referenceName": "OryzaPoolDemo",
+			"type": "SqlPoolReference"
+		}
+	}
+}

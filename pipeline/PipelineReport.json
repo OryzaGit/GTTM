@@ -1,0 +1,687 @@
+{
+	"name": "PipelineReport",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Parquet4",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "ParquetReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Filter1",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata1').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@endswith(item().name,'.parquet')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterReportOverview",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterReportOverview').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "LookupReportOverview",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlPoolSource",
+									"sqlReaderQuery": {
+										"value": "select Name,Type from LogsFile\nwhere Name = '@{item().name}'",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00"
+								},
+								"dataset": {
+									"referenceName": "SqlPoolTable1",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "LookupReportOverview",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(activity('LookupReportOverview').output?.firstRow,null)",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Wait2",
+										"type": "Wait",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"waitTimeInSeconds": 1
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "CopyReportOverview",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "ParquetSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true,
+													"wildcardFolderPath": "synapse/report",
+													"wildcardFileName": "@item().name",
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "ParquetReadSettings"
+												}
+											},
+											"sink": {
+												"type": "SqlPoolSink",
+												"allowCopyCommand": true
+											},
+											"enableStaging": true,
+											"stagingSettings": {
+												"linkedServiceName": {
+													"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+													"type": "LinkedServiceReference"
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "Parquet5",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "SqlPoolTableReportOverview",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "Script1",
+										"type": "Script",
+										"dependsOn": [
+											{
+												"activity": "CopyReportOverview",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"linkedServiceName": {
+											"referenceName": "oryzaworkspce-WorkspaceDefaultSqlServer",
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"DBName": "OryzaPoolDemo"
+											}
+										},
+										"typeProperties": {
+											"scripts": [
+												{
+													"parameters": [
+														{
+															"name": "name",
+															"type": "String",
+															"value": {
+																"value": "@item().name",
+																"type": "Expression"
+															},
+															"direction": "Input"
+														},
+														{
+															"name": "type",
+															"type": "String",
+															"value": "report",
+															"direction": "Input"
+														}
+													],
+													"type": "Query",
+													"text": "INSERT INTO LogsFile(Name,Type)\nVALUES(@name,@type)"
+												}
+											],
+											"scriptBlockExecutionTimeout": "02:00:00"
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterReportOverview",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Filter1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Filter1').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@startswith(item().name,'report_overview')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ForEach1_copy1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterReportVehicleFluctuations",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterReportVehicleFluctuations').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "LookupReportClassifyVehicle",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlPoolSource",
+									"sqlReaderQuery": {
+										"value": "select Name,Type from LogsFile\nwhere Name = '@{item().name}'",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00"
+								},
+								"dataset": {
+									"referenceName": "SqlPoolTable1",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "If Condition1_copy1",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "LookupReportClassifyVehicle",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(activity('LookupReportClassifyVehicle').output?.firstRow,null)",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Wait2_copy1",
+										"type": "Wait",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"waitTimeInSeconds": 1
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "CopyReportVehicleFluctuations",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "ParquetSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true,
+													"wildcardFolderPath": "synapse/report",
+													"wildcardFileName": "@item().name",
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "ParquetReadSettings"
+												}
+											},
+											"sink": {
+												"type": "SqlPoolSink",
+												"allowCopyCommand": true
+											},
+											"enableStaging": true,
+											"stagingSettings": {
+												"linkedServiceName": {
+													"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+													"type": "LinkedServiceReference"
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "Parquet5",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "SqlPoolTableReportVehicleFluctuations",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "ScriptReportVehicleFluctuations",
+										"type": "Script",
+										"dependsOn": [
+											{
+												"activity": "CopyReportVehicleFluctuations",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"linkedServiceName": {
+											"referenceName": "oryzaworkspce-WorkspaceDefaultSqlServer",
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"DBName": "OryzaPoolDemo"
+											}
+										},
+										"typeProperties": {
+											"scripts": [
+												{
+													"parameters": [
+														{
+															"name": "name",
+															"type": "String",
+															"value": {
+																"value": "@item().name",
+																"type": "Expression"
+															},
+															"direction": "Input"
+														},
+														{
+															"name": "type",
+															"type": "String",
+															"value": "report",
+															"direction": "Input"
+														}
+													],
+													"type": "Query",
+													"text": "INSERT INTO LogsFile(Name,Type)\nVALUES(@name,@type)"
+												}
+											],
+											"scriptBlockExecutionTimeout": "02:00:00"
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterReportVehicleFluctuations",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Filter1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Filter1').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@startswith(item().name,'report_vehicle_fluctuations')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "FilterReportClassifyVehicle",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Filter1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Filter1').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@startswith(item().name,'report_classify_vehicle')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ForEachReportClassifyVehicle",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterReportClassifyVehicle",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterReportClassifyVehicle').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "LookupReportClassifyVehicle2",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlPoolSource",
+									"sqlReaderQuery": {
+										"value": "select Name,Type from LogsFile\nwhere Name = '@{item().name}'",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00"
+								},
+								"dataset": {
+									"referenceName": "SqlPoolTable1",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "If ConditionReportClassifyVehicle",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "LookupReportClassifyVehicle2",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(activity('LookupReportClassifyVehicle2').output?.firstRow,null)",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Wait2_copy1_copy1",
+										"type": "Wait",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"waitTimeInSeconds": 1
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "CopyReportClassifyVehicle",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "ParquetSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true,
+													"wildcardFolderPath": "synapse/report",
+													"wildcardFileName": "@item().name",
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "ParquetReadSettings"
+												}
+											},
+											"sink": {
+												"type": "SqlPoolSink",
+												"allowCopyCommand": true
+											},
+											"enableStaging": true,
+											"stagingSettings": {
+												"linkedServiceName": {
+													"referenceName": "oryzaworkspce-WorkspaceDefaultStorage",
+													"type": "LinkedServiceReference"
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "Parquet5",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "SqlPoolTableReportClassifyVehicle",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "ScriptReportClassifyVehicle",
+										"type": "Script",
+										"dependsOn": [
+											{
+												"activity": "CopyReportClassifyVehicle",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"linkedServiceName": {
+											"referenceName": "oryzaworkspce-WorkspaceDefaultSqlServer",
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"DBName": "OryzaPoolDemo"
+											}
+										},
+										"typeProperties": {
+											"scripts": [
+												{
+													"parameters": [
+														{
+															"name": "name",
+															"type": "String",
+															"value": {
+																"value": "@item().name",
+																"type": "Expression"
+															},
+															"direction": "Input"
+														},
+														{
+															"name": "type",
+															"type": "String",
+															"value": "report",
+															"direction": "Input"
+														}
+													],
+													"type": "Query",
+													"text": "INSERT INTO LogsFile(Name,Type)\nVALUES(@name,@type)"
+												}
+											],
+											"scriptBlockExecutionTimeout": "02:00:00"
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"isSucess": {
+				"type": "Boolean"
+			}
+		},
+		"annotations": []
+	}
+}
